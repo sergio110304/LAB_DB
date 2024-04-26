@@ -6,8 +6,7 @@ def realizar_consulta(conexion):
         try:
             cursor = conexion.cursor()
             query = '''
-                    SELECT * 
-                    FROM Resultados_Saber_11_R_Caribe_2015_2022;
+                    SELECT FAMI_TIENECOMPUTADOR, FAMI_TIENEINTERNET,AVG(PUNT_GLOBAL) AS Puntaje_Promedio FROM Resultados_Saber_11_R_Caribe_2015_2022 GROUP BY FAMI_TIENEAUTOMOVIL, FAMI_TIENECOMPUTADOR, FAMI_TIENEINTERNET
                     '''
             df_resuldatos = pd.read_sql(query, conexion)
             cursor.close()
