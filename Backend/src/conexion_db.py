@@ -14,3 +14,5 @@ def conectar_servidor():
     except Exception as e:
         print('Error al intentar conectarse:', e)
         return None
+
+## No modificar
