@@ -38,10 +38,6 @@ execution_time = end_time - start_time
 print("Tiempo de ejecución:", execution_time, "segundos")
 
 
-## SEGUNDO COMMIT
-## Otro cambio para ver que pasa
-
-
 '''
 #Voy a crear un cursos para almacenar la informacion en memoria
 cursor = conexion.cursor()
