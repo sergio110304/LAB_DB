@@ -3,6 +3,7 @@ from Querys import consulta_todos_los_datos, consulta_puntaje_promedio_por_perio
 from conexion_db import conectar_servidor
 import plotly.graph_objects as go
 import plotly.express as px
+import pandas as pd
 
 # Main
 if __name__ == "__main__":
@@ -77,39 +78,49 @@ if __name__ == "__main__":
         st.error('No se pudieron obtener los resultados para el puntaje promedio por estrato')
     
     st.markdown("---") 
+
     # Gráfico para el puntaje promedio por departamento
     df_depto = consulta_puntaje_promedio_por_departamento(conexion)
+
     if df_depto is not None:
         departamentos = df_depto['COLE_DEPTO_UBICACION'].unique() 
         st.subheader('Gráfico para el puntaje promedio por departamentos')
+
         select_depto = st.multiselect('Seleccione los departamentos', departamentos)
 
         if select_depto:
+            # Obtener los datos de los departamentos seleccionados y ordenarlos por el eje x (PERIODO)
+            data_seleccionado = df_depto[df_depto['COLE_DEPTO_UBICACION'].isin(select_depto)].sort_values(by='PERIODO')
+            data_seleccionado['PERIODO'] = data_seleccionado['PERIODO'].astype(str)
+
             traces = []
             for depto in select_depto:
                 trace = go.Scatter(
-                    y=df_depto[df_depto['COLE_DEPTO_UBICACION'] == depto]['Puntaje_Promedio'].values,
-                    x=df_depto[df_depto['COLE_DEPTO_UBICACION'] == depto]['PERIODO'].values,
-                    mode='lines',
+                    y=data_seleccionado[data_seleccionado['COLE_DEPTO_UBICACION'] == depto]['Puntaje_Promedio'].values,
+                    x=data_seleccionado[data_seleccionado['COLE_DEPTO_UBICACION'] == depto]['PERIODO'],
+                    mode='lines+markers',
                     name=depto,
                     visible=True
                 )
                 traces.append(trace)
+
             fig = go.Figure(traces)
 
             fig.update_layout(
                 title='Promedio de los estudiantes por departamento',
                 yaxis_title='Puntaje Promedio',
-                xaxis_title='Periodo'
+                xaxis_title='Periodo',
+                xaxis=dict(type='category')  # Tipo de eje x como 'category' para que se traten los valores como cadenas de texto
             )
 
             st.plotly_chart(fig)
+
         else:
-            st.write('Por favor seleccione departamentos para observar la gráfica.')  
-    
+            st.write('Por favor seleccione uno o más departamentos para observar la gráfica.')
+
     else:
         st.error('No se pudieron obtener los resultados para el puntaje promedio por departamento')
-    
+            
     st.markdown("---") 
     # Gráfica para el puntaje promedio por género
     df_acceso_genero = consulta_puntaje_promedio_por_genero(conexion)
