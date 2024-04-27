@@ -44,7 +44,7 @@ def consulta_todos_los_datos(conexion):
                 ,[PUNT_GLOBAL]
                 ,[COLE_MCPIO_UBICACION]
                 ,[COLE_COD_MCPIO_UBICACION]
-            FROM [LAB_ICFES].[dbo].[Resultados_Saber_11_R_Caribe_2015_2022]
+            FROM [COPIA_LAB_ICFES].[dbo].[Resultados_Saber_11_R_Caribe_2015_2022]
             '''
     return realizar_consulta(conexion, query)
 
@@ -99,5 +99,15 @@ def consulta_punt_prom_departamento(conexion):
             SELECT COLE_DEPTO_UBICACION, AVG(PUNT_GLOBAL) as Puntaje_Prom
             FROM Resultados_Saber_11_R_Caribe_2015_2022
             GROUP BY COLE_DEPTO_UBICACION
+            '''
+    return realizar_consulta(conexion, query)
+
+def consulta_puntaje_global_barranquilla_por_periodo(conexion):
+    query = '''
+            Select r.PERIODO, r.COLE_DEPTO_UBICACION, r.COLE_MCPIO_UBICACION, r.ESTU_GENERO, r.COLE_GENERO, r.PUNT_GLOBAL
+            from dbo.Resultados_Saber_11_R_Caribe_2015_2022 r
+            where r.COLE_MCPIO_UBICACION like '%BARRANQUILLA'
+            group by r.PERIODO, r.COLE_DEPTO_UBICACION, r.COLE_MCPIO_UBICACION, r.ESTU_GENERO, r.COLE_GENERO, r.PUNT_GLOBAL
+            order by r.PUNT_GLOBAL desc
             '''
     return realizar_consulta(conexion, query)

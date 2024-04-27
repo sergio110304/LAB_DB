@@ -1,10 +1,11 @@
 import streamlit as st
-from Querys import consulta_todos_los_datos, consulta_puntaje_promedio_por_periodo, consulta_puntaje_promedio_por_estrato, consulta_puntaje_promedio_por_departamento, consulta_puntaje_promedio_por_genero, consulta_punt_prom_departamento
-from conexion_db import conectar_servidor
+from Querys import *
+from conexion_db import *
 import plotly.graph_objects as go
 import plotly.express as px
 import folium
 import pandas as pd
+import altair as alt
 
 # Main
 if __name__ == "__main__":
@@ -158,7 +159,7 @@ if __name__ == "__main__":
     ).add_to(m)
 
     # Mostrar el mapa en Streamlit
-    st.components.v1.html(m._repr_html_(), width=700, height=500)
+    #st.components.v1.html(m._repr_html_(), width=700, height=500)
 
     st.markdown("---") 
 
@@ -191,6 +192,53 @@ if __name__ == "__main__":
 
     else:
         st.error('No se pudieron obtener resultados de la consulta')
+
+    st.markdown("---") 
+    # Gráfica para analizar el puntaje global en Barranquilla por periodo
+    df_global_baq = consulta_puntaje_global_barranquilla_por_periodo(conexion)
+    if not df_global_baq.empty:
+        st.subheader("Gráfico para los puntajes globales en Barranquilla por periodo")
+        # Crear la gráfica
+        grafica = alt.Chart(df_global_baq).mark_area().encode(x='PERIODO', y='PUNT_GLOBAL')
+        st.altair_chart(grafica, use_container_width=True)
+    else:
+        st.error('No se pudieron obtener resultados de la consulta')
+
+    st.markdown("---") 
+    # Histograma de puntajes globales por período en Barranquilla
+    df_hist_global_baq = consulta_puntaje_global_barranquilla_por_periodo(conexion)
+    if not df_hist_global_baq.empty:
+        st.subheader("Histograma de puntajes globales por período en Barranquilla")
+        # Crear el histograma
+        histograma = alt.Chart(df_hist_global_baq).mark_bar().encode(alt.X("PUNT_GLOBAL:Q", bin=alt.Bin(step=50)), y='count()', color='PERIODO:N').properties(width=600, height=400)
+        # Mostrar el gráfico en Streamlit
+        st.altair_chart(histograma)
+    else:
+        st.error('No se pudieron obtener resultados de la consulta')
+
+    st.markdown("---") 
+    # Gráfico de dispersión de puntajes globales por género en Barranquilla
+    df_disp_global_baq = consulta_puntaje_global_barranquilla_por_periodo(conexion)
+    if not df_disp_global_baq.empty:
+        st.subheader("Gráfico de dispersión de puntajes globales por género en Barranquilla")
+        # Crear el gráfico
+        dispersion = alt.Chart(df_disp_global_baq).mark_circle().encode(x='PUNT_GLOBAL:Q', y='ESTU_GENERO:N', color='ESTU_GENERO:N',tooltip=['PUNT_GLOBAL:Q', 'ESTU_GENERO:N']).properties(width=600, height=400)
+        # Mostrar el gráfico en Streamlit
+        st.altair_chart(dispersion)
+    else:
+        st.error('No se pudieron obtener resultados de la consulta')
+
+    st.markdown("---") 
+    # Gráfico de barras apiladas de puntajes globales por género y período
+    df_bar_global_baq = consulta_puntaje_global_barranquilla_por_periodo(conexion)
+    if not df_bar_global_baq.empty:
+        st.subheader("Gráfico de barras apiladas de puntajes globales por género y período")
+        # Crear el gráfico
+        barras_apiladas = alt.Chart(df_bar_global_baq).mark_bar().encode(x='PERIODO:N', y='PUNT_GLOBAL:Q', color='ESTU_GENERO:N', tooltip=['PUNT_GLOBAL:Q', 'PERIODO:N', 'ESTU_GENERO:N']).properties(width=600, height=400,)
+        # Mostrar el gráfico en Streamlit
+        st.altair_chart(barras_apiladas)
+    else:
+        st.error('No se pudieron obtener resultados de la consulta')    
 
     # Cerrar conexión a la base de datos
     conexion.close()
