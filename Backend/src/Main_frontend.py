@@ -43,7 +43,7 @@ if __name__ == "__main__":
         st.write(df_estrato.head())
     else:
         st.error('No se pudieron obtener los resultados para el puntaje promedio por estrato')
-
+    
     st.markdown("---") 
     # Gráfico para el puntaje promedio por departamento
     df_depto = consulta_puntaje_promedio_por_departamento(conexion)
