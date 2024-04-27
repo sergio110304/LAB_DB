@@ -131,6 +131,7 @@ if __name__ == "__main__":
     else:
         st.error('No se pudieron obtener los resultados para el puntaje promedio por departamento')
 
+    '''
     # Cargar datos geoespaciales desde el archivo JSON
     st.subheader('Mapa de Resultados Globales en la región Caribe de Colombia')
 
@@ -160,7 +161,7 @@ if __name__ == "__main__":
 
     # Mostrar el mapa en Streamlit
     #st.components.v1.html(m._repr_html_(), width=700, height=500)
-
+    '''
     st.markdown("---") 
 
     # Gráfica para el puntaje promedio por género

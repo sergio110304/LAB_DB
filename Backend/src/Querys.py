@@ -44,7 +44,7 @@ def consulta_todos_los_datos(conexion):
                 ,[PUNT_GLOBAL]
                 ,[COLE_MCPIO_UBICACION]
                 ,[COLE_COD_MCPIO_UBICACION]
-            FROM [COPIA_LAB_ICFES].[dbo].[Resultados_Saber_11_R_Caribe_2015_2022]
+            FROM [LAB_ICFES].[dbo].[Resultados_Saber_11_R_Caribe_2015_2022]
             '''
     return realizar_consulta(conexion, query)
 
