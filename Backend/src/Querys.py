@@ -50,10 +50,15 @@ def consulta_todos_los_datos(conexion):
 
 def consulta_puntaje_promedio_por_periodo(conexion):
     query = '''
-            SELECT PERIODO, AVG(PUNT_GLOBAL) AS Puntaje_Promedio 
+            SELECT PERIODO, AVG(PUNT_INGLES) AS Puntaje_Ingles,
+                AVG(PUNT_C_NATURALES) AS Puntaje_Ciencias_Naturales,
+                AVG(PUNT_LECTURA_CRITICA) AS Puntaje_Lectura_Critica,
+                AVG(PUNT_MATEMATICAS) AS Puntaje_Matematicas,
+                AVG(PUNT_SOCIALES_CIUDADANAS) AS Puntaje_Sociales_Ciudadanas,
+                AVG(PUNT_GLOBAL) AS Puntaje_Global
             FROM Resultados_Saber_11_R_Caribe_2015_2022 
-            GROUP BY PERIODO 
-            ORDER BY PERIODO
+            GROUP BY PERIODO
+            ORDER BY PERIODO 
             '''
     return realizar_consulta(conexion, query)
 

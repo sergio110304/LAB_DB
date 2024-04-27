@@ -26,11 +26,43 @@ if __name__ == "__main__":
         st.error('No se pudieron obtener los resultados para todos los datos')
 
     st.markdown("---")
+    
     # Gráfica para el puntaje promedio por periodo
     df_punt = consulta_puntaje_promedio_por_periodo(conexion)
     if df_punt is not None:
         st.subheader('Resultados de la consulta para el puntaje promedio por periodo')
-        st.write(df_punt.head())
+        # Obtener los períodos disponibles
+        periodos_disponibles = [20151, 20152, 20161, 20162, 20171, 20172, 20181, 20191,\
+                                20194, 20201, 20211, 20221, 20224]
+
+        # Widget para seleccionar el período
+        periodo_seleccionado = st.slider("Seleccione el período:", min_value=min(periodos_disponibles),
+                                        max_value=max(periodos_disponibles), value=min(periodos_disponibles))
+
+        # Filtrar el DataFrame para el período seleccionado
+        df_periodo_seleccionado = df_punt[df_punt['PERIODO'] == periodo_seleccionado]
+
+        if not df_periodo_seleccionado.empty:
+            # Eliminar la columna de PERIODO para evitar duplicados
+            df_periodo_seleccionado = df_periodo_seleccionado.drop(columns=['PERIODO'])
+
+            # Convertir el DataFrame a un formato adecuado para la gráfica de barras
+            df_melted = df_periodo_seleccionado.melt(var_name='Asignatura', value_name='Promedio')
+
+            # Crear gráfico interactivo de barras con Plotly
+            fig = px.bar(df_melted, x='Asignatura', y='Promedio', color='Asignatura',
+                        title=f"Promedio de Puntaje por periodo {periodo_seleccionado}",
+                        labels={"Promedio": "Promedio de Puntaje"},
+                        template="plotly_white")
+
+            # Agregar ejes y títulos
+            fig.update_xaxes(title="Asignatura")
+            fig.update_yaxes(title="Promedio de puntajes")
+
+            # Mostrar el gráfico 
+            st.plotly_chart(fig)
+        else:
+            st.write("No hay datos disponibles para el período seleccionado.")
     else:
         st.error('No se pudieron obtener los resultados para el puntaje promedio por periodo')
 
