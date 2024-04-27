@@ -32,7 +32,7 @@ if __name__ == "__main__":
     # Gráfica para el puntaje promedio por periodo
     df_punt = consulta_puntaje_promedio_por_periodo(conexion)
     if df_punt is not None:
-        st.subheader('Resultados de la consulta para el puntaje promedio por asignaruras en cada periodo')
+        st.subheader('Resultados de la consulta para el puntaje promedio por asignaturas en cada periodo')
         # Obtener los períodos disponibles
         periodos_disponibles = [20151, 20152, 20161, 20162, 20171, 20172, 20181, 20191,\
                                 20194, 20201, 20211, 20221, 20224]
@@ -74,44 +74,19 @@ if __name__ == "__main__":
     df_estrato = consulta_puntaje_promedio_por_estrato(conexion)
     if df_estrato is not None:
         st.subheader('Resultados de la consulta para el puntaje promedio por estrato')
-        st.write(df_estrato.head())
+        st.write('Por favor seleccione el número de estrato para observar la gráfica.')
+
+        # Obtener la lista de estratos únicos
+        estratos = df_estrato['FAMI_ESTRATOVIVIENDA'].unique()
+        # Crear el Sunburst
+        fig = px.sunburst(df_estrato, path=['FAMI_ESTRATOVIVIENDA', 'COLE_AREA_UBICACION'], values='Puntaje_Promedio')
+        # Mostrar el Sunburst 
+        st.plotly_chart(fig)
+        
     else:
         st.error('No se pudieron obtener los resultados para el puntaje promedio por estrato')
     
     st.markdown("---") 
-
-    # Cargar datos geoespaciales desde el archivo JSON
-    st.subheader('Mapa de Resulados Globales en la región Caribe de Colombia')
-
-    with open("Backend\src\Colombia.geo.json", "r") as file:
-        geojson_data = file.read()
-
-    # Crear el mapa con Folium
-    m = folium.Map(location=[10.195679, -74.516440], zoom_start=6.45)
-
-    df_depa_prom = consulta_punt_prom_departamento(conexion)
-
-    # Añadir datos geoespaciales al mapa
-    folium.GeoJson(geojson_data).add_to(m)
-
-    # Crear una capa de coropleta para mostrar los puntajes globales por departamento
-    folium.Choropleth(
-        geo_data=geojson_data,
-        name='Puntaje Global por Departamento',
-        data=df_depa_prom,
-        columns=['COLE_DEPTO_UBICACION', 'Puntaje_Prom'],
-        key_on='feature.properties.NOMBRE_DPT',
-        fill_color='YlGn',
-        fill_opacity=0.9,
-        line_opacity=0.5,
-        legend_name='Puntaje Global por Departamento',
-    ).add_to(m)
-
-    # Mostrar el mapa en Streamlit
-    st.components.v1.html(m._repr_html_(), width=700, height=500)
-
-    st.markdown("---") 
-
 
     # Gráfico para el puntaje promedio por departamento
     df_depto = consulta_puntaje_promedio_por_departamento(conexion)
@@ -154,8 +129,39 @@ if __name__ == "__main__":
 
     else:
         st.error('No se pudieron obtener los resultados para el puntaje promedio por departamento')
-            
+
+    # Cargar datos geoespaciales desde el archivo JSON
+    st.subheader('Mapa de Resultados Globales en la región Caribe de Colombia')
+
+    with open("Backend\src\Colombia.geo.json", "r") as file:
+        geojson_data = file.read()
+
+    # Crear el mapa con Folium
+    m = folium.Map(location=[10.195679, -74.516440], zoom_start=6.45)
+
+    df_depa_prom = consulta_punt_prom_departamento(conexion)
+
+    # Añadir datos geoespaciales al mapa
+    folium.GeoJson(geojson_data).add_to(m)
+
+    # Crear una capa de coropleta para mostrar los puntajes globales por departamento
+    folium.Choropleth(
+        geo_data=geojson_data,
+        name='Puntaje Global por Departamento',
+        data=df_depa_prom,
+        columns=['COLE_DEPTO_UBICACION', 'Puntaje_Prom'],
+        key_on='feature.properties.NOMBRE_DPT',
+        fill_color='YlGn',
+        fill_opacity=0.9,
+        line_opacity=0.5,
+        legend_name='Puntaje Global por Departamento',
+    ).add_to(m)
+
+    # Mostrar el mapa en Streamlit
+    st.components.v1.html(m._repr_html_(), width=700, height=500)
+
     st.markdown("---") 
+
     # Gráfica para el puntaje promedio por género
     df_acceso_genero = consulta_puntaje_promedio_por_genero(conexion)
     if not df_acceso_genero.empty:
