@@ -2,7 +2,7 @@ import streamlit as st
 from Querys import consulta_todos_los_datos, consulta_puntaje_promedio_por_periodo, consulta_puntaje_promedio_por_estrato, consulta_puntaje_promedio_por_departamento, consulta_puntaje_promedio_por_genero
 from conexion_db import conectar_servidor
 import plotly.graph_objects as go
-
+import plotly.express as px
 
 # Main
 if __name__ == "__main__":
@@ -82,9 +82,24 @@ if __name__ == "__main__":
     # Gráfica para el puntaje promedio por género
     df_acceso_genero = consulta_puntaje_promedio_por_genero(conexion)
     if not df_acceso_genero.empty:
-        st.subheader("Gráfico para el puntaje promedio por género  ")  
-        st.write("Resultados de la consulta:")
-        st.write(df_acceso_genero.head())
+        st.subheader("Gráfico para el puntaje promedio por género")  
+
+        # Widget para seleccionar el tipo de promedio
+        promedio_selector = st.radio("Selecciona el tipo de promedio:", 
+                                ["Promedio_Puntaje_Ingles", "Promedio_Puntaje_Ciencias_Naturales", 
+                                "Promedio_Puntaje_Lectura_Critica", "Promedio_Puntaje_Matematicas", 
+                                "Promedio_Puntaje_Sociales_Ciudadanas", "Puntaje_Promedio_Total"])
+        if promedio_selector: 
+            # Crear gráfico de barras con Plotly
+            fig = px.bar(df_acceso_genero, x="ESTU_GENERO", y=promedio_selector, color="ESTU_GENERO",
+                        labels={"value": "Promedio de puntaje", "ESTU_GENERO": "Género"},
+                        title=f"Promedio de puntaje por género ({promedio_selector})",
+                        template="plotly_white")
+
+            # Mostrar el gráfico de barras
+            st.plotly_chart(fig)
+        else: 
+            st.write('Por favor seleccione un tipo de promedio para observar la gráfica.')  
 
     else:
         st.error('No se pudieron obtener resultados de la consulta')
