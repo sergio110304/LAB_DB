@@ -67,8 +67,8 @@ if __name__ == "__main__":
 
             fig.update_layout(
                 title='Promedio de los estudiantes por departamento',
-                yaxis_title='PERIODO',
-                xaxis_title='Puntaje Promedio'
+                yaxis_title='Puntaje Promedio',
+                xaxis_title='Periodo'
             )
 
             st.plotly_chart(fig)
