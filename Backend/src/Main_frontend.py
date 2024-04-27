@@ -1,5 +1,5 @@
 import streamlit as st
-from Querys import consulta_todos_los_datos, consulta_puntaje_promedio_por_periodo, consulta_puntaje_promedio_por_estrato, consulta_puntaje_promedio_por_departamento, consulta_puntaje_promedio_por_acceso_a_recursos
+from Querys import consulta_todos_los_datos, consulta_puntaje_promedio_por_periodo, consulta_puntaje_promedio_por_estrato, consulta_puntaje_promedio_por_departamento, consulta_puntaje_promedio_por_genero
 from conexion_db import conectar_servidor
 import plotly.graph_objects as go
 
@@ -79,12 +79,12 @@ if __name__ == "__main__":
         st.error('No se pudieron obtener los resultados para el puntaje promedio por departamento')
     
     st.markdown("---") 
-    # Gráfica para el puntaje promedio por acceso a recursos
-    df_acceso_recursos = consulta_puntaje_promedio_por_acceso_a_recursos(conexion)
-    if not df_acceso_recursos.empty:
-        st.subheader("Gráfico para el puntaje promedio por acceso a recursos  ")  
+    # Gráfica para el puntaje promedio por género
+    df_acceso_genero = consulta_puntaje_promedio_por_genero(conexion)
+    if not df_acceso_genero.empty:
+        st.subheader("Gráfico para el puntaje promedio por género  ")  
         st.write("Resultados de la consulta:")
-        st.write(df_acceso_recursos.head())
+        st.write(df_acceso_genero.head())
 
     else:
         st.error('No se pudieron obtener resultados de la consulta')

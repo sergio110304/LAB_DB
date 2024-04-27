@@ -73,10 +73,16 @@ def consulta_puntaje_promedio_por_departamento(conexion):
             '''
     return realizar_consulta(conexion, query)
 
-def consulta_puntaje_promedio_por_acceso_a_recursos(conexion):
+def consulta_puntaje_promedio_por_genero(conexion):
     query = '''
-            SELECT FAMI_TIENECOMPUTADOR, FAMI_TIENEINTERNET, AVG(PUNT_GLOBAL) AS Puntaje_Promedio 
-            FROM Resultados_Saber_11_R_Caribe_2015_2022 
-            GROUP BY FAMI_TIENECOMPUTADOR, FAMI_TIENEINTERNET
+            SELECT ESTU_GENERO,
+                AVG(PUNT_INGLES) AS Promedio_Puntaje_Ingles,
+                AVG(PUNT_C_NATURALES) AS Promedio_Puntaje_Ciencias_Naturales,
+                AVG(PUNT_LECTURA_CRITICA) AS Promedio_Puntaje_Lectura_Critica,
+                AVG(PUNT_MATEMATICAS) AS Promedio_Puntaje_Matematicas,
+                AVG(PUNT_SOCIALES_CIUDADANAS) AS Promedio_Puntaje_Sociales_Ciudadanas,
+                AVG(PUNT_GLOBAL) AS Puntaje_Promedio_Total
+            FROM Resultados_Saber_11_R_Caribe_2015_2022
+            GROUP BY ESTU_GENERO;
             '''
     return realizar_consulta(conexion, query)
