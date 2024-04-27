@@ -30,14 +30,13 @@ if __name__ == "__main__":
     # Gráfica para el puntaje promedio por periodo
     df_punt = consulta_puntaje_promedio_por_periodo(conexion)
     if df_punt is not None:
-        st.subheader('Resultados de la consulta para el puntaje promedio por periodo')
+        st.subheader('Resultados de la consulta para el puntaje promedio por asignaruras en cada periodo')
         # Obtener los períodos disponibles
         periodos_disponibles = [20151, 20152, 20161, 20162, 20171, 20172, 20181, 20191,\
                                 20194, 20201, 20211, 20221, 20224]
 
         # Widget para seleccionar el período
-        periodo_seleccionado = st.slider("Seleccione el período:", min_value=min(periodos_disponibles),
-                                        max_value=max(periodos_disponibles), value=min(periodos_disponibles))
+        periodo_seleccionado = st.select_slider("Seleccione el período:", options=periodos_disponibles)
 
         # Filtrar el DataFrame para el período seleccionado
         df_periodo_seleccionado = df_punt[df_punt['PERIODO'] == periodo_seleccionado]
@@ -55,9 +54,10 @@ if __name__ == "__main__":
                         labels={"Promedio": "Promedio de Puntaje"},
                         template="plotly_white")
 
+            fig.update_layout(transition_duration=500)
             # Agregar ejes y títulos
             fig.update_xaxes(title="Asignatura")
-            fig.update_yaxes(title="Promedio de puntajes")
+            fig.update_yaxes(title="Puntajes (Percentil)", range=[0, 90]) 
 
             # Mostrar el gráfico 
             st.plotly_chart(fig)
@@ -127,6 +127,11 @@ if __name__ == "__main__":
                         labels={"value": "Promedio de puntaje", "ESTU_GENERO": "Género"},
                         title=f"Promedio de puntaje por género ({promedio_selector})",
                         template="plotly_white")
+
+            # Configurar animación
+            fig.update_layout(transition_duration=500)
+
+            fig.update_yaxes(range=[0, 50])
 
             # Mostrar el gráfico de barras
             st.plotly_chart(fig)
