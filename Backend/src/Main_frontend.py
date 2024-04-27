@@ -49,7 +49,6 @@ if __name__ == "__main__":
     # Gráfico para el puntaje promedio por departamento
     df_depto = consulta_puntaje_promedio_por_departamento(conexion)
     if df_depto is not None:
-        # operaciones por departamento
         departamentos = df_depto['COLE_DEPTO_UBICACION'].unique() 
         st.subheader('Gráfico para el puntaje promedio por departamentos')
         select_depto = st.multiselect('Seleccione los departamentos', departamentos)
@@ -57,21 +56,25 @@ if __name__ == "__main__":
         if select_depto:
             traces = []
             for depto in select_depto:
-                trace = go.Scatter(x=df_depto[df_depto['COLE_DEPTO_UBICACION'] == depto]['Puntaje_Promedio'].value_counts().sort_index(ascending=True).index,
-                                    y=df_depto[df_depto['COLE_DEPTO_UBICACION'] == depto]['Puntaje_Promedio'].value_counts().sort_index(ascending=True).values,
-                                    mode='lines',
-                                    name=depto,
-                                    visible=True)  
+                trace = go.Scatter(
+                    y=df_depto[df_depto['COLE_DEPTO_UBICACION'] == depto]['PERIODO'].values,
+                    x=df_depto[df_depto['COLE_DEPTO_UBICACION'] == depto]['Puntaje_Promedio'].values,
+                    mode='lines',
+                    name=depto,
+                    visible=True
+                )
                 traces.append(trace)
             fig = go.Figure(traces)
 
-            fig.update_layout(title='Promedio de los estudiantes sobre los departamentos ',
-                                xaxis_title='Promedio',
-                                yaxis_title= 'PERIODO')
+            fig.update_layout(
+                title='Promedio de los estudiantes por departamento',
+                yaxis_title='PERIODO',
+                xaxis_title='Puntaje Promedio'
+            )
 
             st.plotly_chart(fig)
         else:
-            st.write('Porfavor seleccione departamentos para observar la gráfica.')  
+            st.write('Por favor seleccione departamentos para observar la gráfica.')  
     
     else:
         st.error('No se pudieron obtener los resultados para el puntaje promedio por departamento')
