@@ -63,9 +63,12 @@ def consulta_puntaje_promedio_por_periodo(conexion):
 
 def consulta_puntaje_promedio_por_estrato(conexion):
     query = '''
-            SELECT FAMI_ESTRATOVIVIENDA, AVG(PUNT_GLOBAL) AS Puntaje_Promedio 
-            FROM Resultados_Saber_11_R_Caribe_2015_2022 
-            GROUP BY FAMI_ESTRATOVIVIENDA
+            SELECT FAMI_ESTRATOVIVIENDA, COLE_AREA_UBICACION, 
+                AVG(PUNT_GLOBAL) AS Puntaje_Promedio
+            FROM Resultados_Saber_11_R_Caribe_2015_2022
+            WHERE FAMI_ESTRATOVIVIENDA IS NOT NULL
+            GROUP BY FAMI_ESTRATOVIVIENDA, COLE_AREA_UBICACION
+            ORDER BY FAMI_ESTRATOVIVIENDA
             '''
     return realizar_consulta(conexion, query)
 
