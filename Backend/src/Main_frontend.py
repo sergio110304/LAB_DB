@@ -1,8 +1,9 @@
 import streamlit as st
-from Querys import consulta_todos_los_datos, consulta_puntaje_promedio_por_periodo, consulta_puntaje_promedio_por_estrato, consulta_puntaje_promedio_por_departamento, consulta_puntaje_promedio_por_genero
+from Querys import consulta_todos_los_datos, consulta_puntaje_promedio_por_periodo, consulta_puntaje_promedio_por_estrato, consulta_puntaje_promedio_por_departamento, consulta_puntaje_promedio_por_genero, consulta_punt_prom_departamento
 from conexion_db import conectar_servidor
 import plotly.graph_objects as go
 import plotly.express as px
+import folium
 import pandas as pd
 
 # Main
@@ -78,6 +79,39 @@ if __name__ == "__main__":
         st.error('No se pudieron obtener los resultados para el puntaje promedio por estrato')
     
     st.markdown("---") 
+
+    # Cargar datos geoespaciales desde el archivo JSON
+    st.subheader('Mapa de Resulados Globales en la región Caribe de Colombia')
+
+    with open("Backend\src\Colombia.geo.json", "r") as file:
+        geojson_data = file.read()
+
+    # Crear el mapa con Folium
+    m = folium.Map(location=[10.195679, -74.516440], zoom_start=6.45)
+
+    df_depa_prom = consulta_punt_prom_departamento(conexion)
+
+    # Añadir datos geoespaciales al mapa
+    folium.GeoJson(geojson_data).add_to(m)
+
+    # Crear una capa de coropleta para mostrar los puntajes globales por departamento
+    folium.Choropleth(
+        geo_data=geojson_data,
+        name='Puntaje Global por Departamento',
+        data=df_depa_prom,
+        columns=['COLE_DEPTO_UBICACION', 'Puntaje_Prom'],
+        key_on='feature.properties.NOMBRE_DPT',
+        fill_color='YlGn',
+        fill_opacity=0.9,
+        line_opacity=0.5,
+        legend_name='Puntaje Global por Departamento',
+    ).add_to(m)
+
+    # Mostrar el mapa en Streamlit
+    st.components.v1.html(m._repr_html_(), width=700, height=500)
+
+    st.markdown("---") 
+
 
     # Gráfico para el puntaje promedio por departamento
     df_depto = consulta_puntaje_promedio_por_departamento(conexion)

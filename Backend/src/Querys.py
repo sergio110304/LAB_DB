@@ -93,3 +93,11 @@ def consulta_puntaje_promedio_por_genero(conexion):
         GROUP BY ESTU_GENERO
             '''
     return realizar_consulta(conexion, query)
+
+def consulta_punt_prom_departamento(conexion):
+    query = '''
+            SELECT COLE_DEPTO_UBICACION, AVG(PUNT_GLOBAL) as Puntaje_Prom
+            FROM Resultados_Saber_11_R_Caribe_2015_2022
+            GROUP BY COLE_DEPTO_UBICACION
+            '''
+    return realizar_consulta(conexion, query)
