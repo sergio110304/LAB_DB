@@ -17,7 +17,6 @@ if __name__ == "__main__":
                 la  Región Caribe de Colombia. ")
         
     st.markdown("---")
-
     # Gráfica para todos los datos
     df_all = consulta_todos_los_datos(conexion)
     if df_all is not None:
@@ -27,7 +26,6 @@ if __name__ == "__main__":
         st.error('No se pudieron obtener los resultados para todos los datos')
 
     st.markdown("---")
-
     # Gráfica para el puntaje promedio por periodo
     df_punt = consulta_puntaje_promedio_por_periodo(conexion)
     if df_punt is not None:
@@ -46,6 +44,7 @@ if __name__ == "__main__":
     else:
         st.error('No se pudieron obtener los resultados para el puntaje promedio por estrato')
 
+    st.markdown("---") 
     # Gráfico para el puntaje promedio por departamento
     df_depto = consulta_puntaje_promedio_por_departamento(conexion)
     if df_depto is not None:
@@ -57,8 +56,8 @@ if __name__ == "__main__":
             traces = []
             for depto in select_depto:
                 trace = go.Scatter(
-                    y=df_depto[df_depto['COLE_DEPTO_UBICACION'] == depto]['PERIODO'].values,
-                    x=df_depto[df_depto['COLE_DEPTO_UBICACION'] == depto]['Puntaje_Promedio'].values,
+                    y=df_depto[df_depto['COLE_DEPTO_UBICACION'] == depto]['Puntaje_Promedio'].values,
+                    x=df_depto[df_depto['COLE_DEPTO_UBICACION'] == depto]['PERIODO'].values,
                     mode='lines',
                     name=depto,
                     visible=True
@@ -78,7 +77,8 @@ if __name__ == "__main__":
     
     else:
         st.error('No se pudieron obtener los resultados para el puntaje promedio por departamento')
-
+    
+    st.markdown("---") 
     # Gráfica para el puntaje promedio por acceso a recursos
     df_acceso_recursos = consulta_puntaje_promedio_por_acceso_a_recursos(conexion)
     if not df_acceso_recursos.empty:
