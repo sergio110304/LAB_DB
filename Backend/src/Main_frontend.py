@@ -4,7 +4,7 @@ from conexion_db import *
 import plotly.graph_objects as go
 import plotly.express as px
 import altair as alt
-
+'''
 # Main
 if __name__ == "__main__":
     conexion = conectar_servidor() # Conexión a la base de datos
@@ -299,3 +299,4 @@ if __name__ == "__main__":
 #else:
  #   st.error('No se pudo establecer la conexión a la base de datos')
 
+'''

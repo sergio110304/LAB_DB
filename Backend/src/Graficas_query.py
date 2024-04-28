@@ -10,7 +10,7 @@ def mostrar_datos(conexion):
     # Gráfica para todos los datos
     df_all = consulta_todos_los_datos(conexion)
     if df_all is not None:
-        st.subheader('Resultados de la consulta para todos los datos')
+        st.subheader('Base de datos')
         st.write(df_all.head())
     else:
         st.error('No se pudieron obtener los resultados para todos los datos')
@@ -20,7 +20,7 @@ def g_puntajeProm_Asig_periodo(conexion):
     # Gráfica para el puntaje promedio por periodo
     df_punt = consulta_puntaje_promedio_por_periodo(conexion)
     if df_punt is not None:
-        st.subheader('Resultados de la consulta para el puntaje promedio por asignaturas en cada periodo')
+        st.subheader('Puntaje promedio de las Asignaturas')
         # Obtener los períodos disponibles
         periodos_disponibles = [20151, 20152, 20161, 20162, 20171, 20172, 20181, 20191,\
                                 20194, 20201, 20211, 20221, 20224]
@@ -61,7 +61,7 @@ def g_puntajeProm_Estrato(conexion):
     # Gráfica para el puntaje promedio por estrato
     df_estrato = consulta_puntaje_promedio_por_estrato(conexion)
     if df_estrato is not None:
-        st.subheader('Resultados de la consulta para el puntaje promedio por estrato')
+        st.subheader('Puntaje promedio por Estrato')
         st.write('Por favor seleccione el número de estrato para observar la gráfica.')
 
         # Obtener la lista de estratos únicos
@@ -81,7 +81,7 @@ def g_puntajeProm_Dept(conexion):
 
     if df_depto is not None:
         departamentos = df_depto['COLE_DEPTO_UBICACION'].unique() 
-        st.subheader('Gráfico para el puntaje promedio por departamentos')
+        st.subheader('Puntaje promedio por Departamento')
 
         select_depto = st.multiselect('Seleccione los departamentos', departamentos)
 
@@ -119,11 +119,11 @@ def g_puntajeProm_Dept(conexion):
         st.error('No se pudieron obtener los resultados para el puntaje promedio por departamento')
 
 def g_puntajeProm_genero(conexion):
-    st.markdown("---") 
+
     # Gráfica para el puntaje promedio por género
     df_acceso_genero = consulta_puntaje_promedio_por_genero(conexion)
     if not df_acceso_genero.empty:
-        st.subheader("Gráfico para el puntaje promedio por género")  
+        st.subheader("Puntaje promedio por Genero")  
 
         # Widget para seleccionar el tipo de promedio
         promedio_selector = st.radio("Selecciona el tipo de promedio:", 
