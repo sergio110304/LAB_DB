@@ -196,55 +196,140 @@ if __name__ == "__main__":
     else:
         st.error('No se pudieron obtener resultados de la consulta')
 
-    st.markdown("---") 
-    # Gráfica para analizar el puntaje global en Barranquilla por periodo
-    df_global_baq = consulta_puntaje_global_barranquilla_por_periodo(conexion)
-    if not df_global_baq.empty:
-        st.subheader("Gráfico para los puntajes globales en Barranquilla por periodo")
-        # Crear la gráfica
-        grafica = alt.Chart(df_global_baq).mark_area().encode(x='PERIODO', y='PUNT_GLOBAL')
-        st.altair_chart(grafica, use_container_width=True)
+    #*****************************************************************************************************
+    st.markdown("---")
+    st.header("Gráficos para los puntajes globales por género y período para cada departamento/municipio")
+
+    df_global_deptmun = consulta_puntaje_global_por_periodo(conexion)
+    if not df_global_deptmun.empty:
+        st.subheader("Para las siguientes gráficas seleccione el departamento/municipio que desea consultar:")
+        # Se agregan widgets de selección para el departamento y municipio
+        departamento_seleccionado = st.selectbox("Selecciona un departamento", df_global_deptmun['COLE_DEPTO_UBICACION'].unique())
+        municipio_seleccionado = st.selectbox("Selecciona un municipio", df_global_deptmun[df_global_deptmun['COLE_DEPTO_UBICACION'] == departamento_seleccionado]['COLE_MCPIO_UBICACION'].unique())
     else:
         st.error('No se pudieron obtener resultados de la consulta')
+    
+    st.text("")
 
-    st.markdown("---") 
-    # Histograma de puntajes globales por período en Barranquilla
-    df_hist_global_baq = consulta_puntaje_global_barranquilla_por_periodo(conexion)
-    if not df_hist_global_baq.empty:
-        st.subheader("Histograma de puntajes globales por período en Barranquilla")
-        # Crear el histograma
-        histograma = alt.Chart(df_hist_global_baq).mark_bar().encode(alt.X("PUNT_GLOBAL:Q", bin=alt.Bin(step=50)), y='count()', color='PERIODO:N').properties(width=600, height=400)
-        # Mostrar el gráfico en Streamlit
-        st.altair_chart(histograma)
-    else:
-        st.error('No se pudieron obtener resultados de la consulta')
+    # Gráfico de barras apiladas de puntajes globales por género y período para cada departamento/municipio
+    df_bar_global_deptmun = consulta_puntaje_global_por_periodo(conexion)
+    if not df_bar_global_deptmun.empty:
+        st.subheader("Gráfico de barras apiladas de puntajes globales por género y período para cada departamento/municipio")
 
-    st.markdown("---") 
-    # Gráfico de dispersión de puntajes globales por género en Barranquilla
-    df_disp_global_baq = consulta_puntaje_global_barranquilla_por_periodo(conexion)
-    if not df_disp_global_baq.empty:
-        st.subheader("Gráfico de dispersión de puntajes globales por género en Barranquilla")
-        # Crear el gráfico
-        dispersion = alt.Chart(df_disp_global_baq).mark_circle().encode(x='PUNT_GLOBAL:Q', y='ESTU_GENERO:N', color='ESTU_GENERO:N',tooltip=['PUNT_GLOBAL:Q', 'ESTU_GENERO:N']).properties(width=600, height=400)
-        # Mostrar el gráfico en Streamlit
-        st.altair_chart(dispersion)
-    else:
-        st.error('No se pudieron obtener resultados de la consulta')
+        # Se filtran los datos según la selección
+        df_filtrado = df_bar_global_deptmun[(df_bar_global_deptmun['COLE_DEPTO_UBICACION'] == departamento_seleccionado) & (df_bar_global_deptmun['COLE_MCPIO_UBICACION'] == municipio_seleccionado)]
 
-    st.markdown("---") 
-    # Gráfico de barras apiladas de puntajes globales por género y período
-    df_bar_global_baq = consulta_puntaje_global_barranquilla_por_periodo(conexion)
-    if not df_bar_global_baq.empty:
-        st.subheader("Gráfico de barras apiladas de puntajes globales por género y período")
-        # Crear el gráfico
-        barras_apiladas = alt.Chart(df_bar_global_baq).mark_bar().encode(x='PERIODO:N', y='PUNT_GLOBAL:Q', color='ESTU_GENERO:N', tooltip=['PUNT_GLOBAL:Q', 'PERIODO:N', 'ESTU_GENERO:N']).properties(width=600, height=400,)
+        # Creación del gráfico de barras apiladas
+        barras_apiladas = alt.Chart(df_filtrado).mark_bar().encode(x='PERIODO:N', y='PUNT_GLOBAL:Q', color='ESTU_GENERO:N', tooltip=['PUNT_GLOBAL:Q', 'PERIODO:N', 'ESTU_GENERO:N']).properties(width=600, height=400, title=f'Puntajes Globales por Género y Período en {municipio_seleccionado}, {departamento_seleccionado}')
+
         # Mostrar el gráfico en Streamlit
         st.altair_chart(barras_apiladas)
     else:
-        st.error('No se pudieron obtener resultados de la consulta')    
+        st.error('No se pudieron obtener resultados de la consulta')
+
+    st.text("")
+
+    #Gráfico de líneas acerca de los puntajes globales por genero y período para cada departamento/municipio
+    df_lin_global_deptmun = consulta_puntaje_global_por_periodo(conexion)
+    if not df_lin_global_deptmun.empty:
+        st.subheader("Gráfico de líneas acerca de los puntajes globales por genero y período para cada departamento/municipio")
+        
+        # Se filtran los datos según la selección
+        df_filtrado = df_lin_global_deptmun[(df_lin_global_deptmun['COLE_DEPTO_UBICACION'] == departamento_seleccionado) & (df_lin_global_deptmun['COLE_MCPIO_UBICACION'] == municipio_seleccionado)]
+
+        # Creación del gráfico de lineas
+        grafico_lineas = alt.Chart(df_filtrado).mark_line().encode(x='PERIODO:N', y='PUNT_GLOBAL:Q', color='ESTU_GENERO:N', tooltip=['PUNT_GLOBAL:Q', 'PERIODO:N', 'ESTU_GENERO:N']).properties(width=600, height=400,title=f'Puntajes Globales por Género y Período en {municipio_seleccionado}, {departamento_seleccionado}')
+
+        # Mostrar el gráfico en Streamlit
+        st.altair_chart(grafico_lineas)
+    else:
+        st.error('No se pudieron obtener resultados de la consulta')
+
+    st.text("")
+
+    # Gráfico de areas apiladas de puntajes globales por género y período para cada departamento/municipio
+    df_are_global_deptmun = consulta_puntaje_global_por_periodo(conexion)
+    if not df_are_global_deptmun.empty:
+        st.subheader("Gráfico de areas apiladas de puntajes globales por género y período para cada departamento/municipio")
+        
+        # Se filtran los datos según la selección
+        df_filtrado = df_are_global_deptmun[(df_are_global_deptmun['COLE_DEPTO_UBICACION'] == departamento_seleccionado) & (df_are_global_deptmun['COLE_MCPIO_UBICACION'] == municipio_seleccionado)]
+
+        # Creación del gráfico de areas apiladas
+        areas_apiladas = alt.Chart(df_filtrado).mark_area().encode(x='PERIODO:N', y=alt.Y('PUNT_GLOBAL:Q', stack=None), color='ESTU_GENERO:N', tooltip=['PUNT_GLOBAL:Q', 'PERIODO:N', 'ESTU_GENERO:N']).properties(width=600, height=400, title=f'Puntajes Globales por Género y Período en {municipio_seleccionado}, {departamento_seleccionado}')
+
+        # Mostrar el gráfico en Streamlit
+        st.altair_chart(areas_apiladas)
+    else:
+        st.error('No se pudieron obtener resultados de la consulta')
+
+    st.text("")
+
+    # Gráfico de dispersión para los puntajes globales por género y período para cada departamento/municipio
+    df_disp_global_deptmun = consulta_puntaje_global_por_periodo(conexion)
+    if not df_disp_global_deptmun.empty:
+        st.subheader("Gráfico de dispersión para los puntajes globales por género y período para cada departamento/municipio")
+        
+        # Se filtran los datos según la selección
+        df_filtrado = df_disp_global_deptmun[(df_disp_global_deptmun['COLE_DEPTO_UBICACION'] == departamento_seleccionado) & (df_disp_global_deptmun['COLE_MCPIO_UBICACION'] == municipio_seleccionado)]
+
+        # Creación del gráfico de dispersión
+        dispersion_deptmun = alt.Chart(df_filtrado).mark_point().encode(x='PERIODO:N', y='PUNT_GLOBAL:Q', color='ESTU_GENERO:N', tooltip=['PUNT_GLOBAL:Q', 'PERIODO:N', 'ESTU_GENERO:N']).properties(width=600, height=400, title=f'Puntajes Globales por Género y Período en {municipio_seleccionado}, {departamento_seleccionado}').interactive()
+
+        # Mostrar el gráfico en Streamlit
+        st.altair_chart(dispersion_deptmun)
+    else:
+        st.error('No se pudieron obtener resultados de la consulta')
+    
+    #*****************************************************************************************************    
+    st.markdown("---")
+    st.header("Gráficos para los puntajes globales en Barranquilla")    
+
+    # Menú de opciones para elegir cual gráfico mostrar
+    opcion_graficas_baq = st.selectbox("Selecciona el tipo de gráfico", ["Gráfico de Areas", "Histograma", "Dispersión"])
+
+    # Mostrar el gráfico correspondiente según la opción seleccionada
+    if opcion_graficas_baq == "Gráfico de Areas":
+        
+        # Gráfica de area para analizar el puntaje global en Barranquilla por periodo
+        df_area_global_baq = consulta_puntaje_global_barranquilla_por_periodo(conexion)
+        if not df_area_global_baq.empty:
+            st.subheader("Gráfico de area para los puntajes globales en Barranquilla por periodo")
+            # Crear la gráfica de area
+            grafica = alt.Chart(df_area_global_baq).mark_area().encode(x='PERIODO', y='PUNT_GLOBAL')
+            st.altair_chart(grafica, use_container_width=True)
+        else:
+            st.error('No se pudieron obtener resultados de la consulta')       
+
+    elif opcion_graficas_baq == "Histograma":
+
+        # Histograma de puntajes globales por período en Barranquilla
+        df_hist_global_baq = consulta_puntaje_global_barranquilla_por_periodo(conexion)
+        if not df_hist_global_baq.empty:
+            st.subheader("Histograma de puntajes globales por período en Barranquilla")
+            # Crear el histograma
+            histograma = alt.Chart(df_hist_global_baq).mark_bar().encode(alt.X("PUNT_GLOBAL:Q", bin=alt.Bin(step=50)), y='count()', color='PERIODO:N').properties(width=600, height=400)
+            # Mostrar el gráfico en Streamlit
+            st.altair_chart(histograma)
+        else:
+            st.error('No se pudieron obtener resultados de la consulta')
+        
+    elif opcion_graficas_baq == "Dispersión":
+
+        # Gráfico de dispersión de puntajes globales por género en Barranquilla
+        df_disp_global_baq = consulta_puntaje_global_barranquilla_por_periodo(conexion)
+        if not df_disp_global_baq.empty:
+            st.subheader("Gráfico de dispersión de puntajes globales por género en Barranquilla")
+            # Crear el gráfico
+            dispersion = alt.Chart(df_disp_global_baq).mark_circle().encode(x='PUNT_GLOBAL:Q', y='ESTU_GENERO:N', color='ESTU_GENERO:N',tooltip=['PUNT_GLOBAL:Q', 'ESTU_GENERO:N']).properties(width=600, height=400)
+            # Mostrar el gráfico en Streamlit
+            st.altair_chart(dispersion)
+        else:
+            st.error('No se pudieron obtener resultados de la consulta')
+    else:
+         st.error('No se pudieron obtener resultados de la seleccíon')
 
     # Cerrar conexión a la base de datos
     conexion.close()
-
 else:
     st.error('No se pudo establecer la conexión a la base de datos')

@@ -111,3 +111,12 @@ def consulta_puntaje_global_barranquilla_por_periodo(conexion):
             order by r.PUNT_GLOBAL desc
             '''
     return realizar_consulta(conexion, query)
+
+def consulta_puntaje_global_por_periodo(conexion):
+    query = '''
+            Select r.PERIODO, r.COLE_DEPTO_UBICACION, r.COLE_MCPIO_UBICACION, r.ESTU_GENERO, r.COLE_GENERO, r.PUNT_GLOBAL
+            from dbo.Resultados_Saber_11_R_Caribe_2015_2022 r
+            group by r.PERIODO, r.COLE_DEPTO_UBICACION, r.COLE_MCPIO_UBICACION, r.ESTU_GENERO, r.COLE_GENERO, r.PUNT_GLOBAL
+            order by r.PUNT_GLOBAL desc
+            '''
+    return realizar_consulta(conexion, query)
