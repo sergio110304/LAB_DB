@@ -151,7 +151,7 @@ def g_puntajeProm_genero(conexion):
         st.error('No se pudieron obtener resultados de la consulta')
 
 def consulta_global_municipios(conexion):
-    st.markdown("---")
+
     st.header("Gráficos para los puntajes globales por género y período para cada departamento/municipio")
 
     df_global_deptmun = consulta_puntaje_global_por_periodo(conexion)
@@ -175,13 +175,13 @@ def g_ba_genero_municipio(conexion, departamento_seleccionado, municipio_selecci
         # Gráfico de barras apiladas de puntajes globales por género y período para cada departamento/municipio
     df_bar_global_deptmun = consulta_puntaje_global_por_periodo(conexion)
     if not df_bar_global_deptmun.empty:
-        st.subheader("Gráfico de barras apiladas de puntajes globales por género y período para cada departamento/municipio")
+        st.subheader("Gráfico de Barras Apiladas")
 
         # Se filtran los datos según la selección
         df_filtrado = df_bar_global_deptmun[(df_bar_global_deptmun['COLE_DEPTO_UBICACION'] == departamento_seleccionado) & (df_bar_global_deptmun['COLE_MCPIO_UBICACION'] == municipio_seleccionado)]
 
         # Creación del gráfico de barras apiladas
-        barras_apiladas = alt.Chart(df_filtrado).mark_bar().encode(x='PERIODO:N', y='PUNT_GLOBAL:Q', color='ESTU_GENERO:N', tooltip=['PUNT_GLOBAL:Q', 'PERIODO:N', 'ESTU_GENERO:N']).properties(width=600, height=400, title=f'Puntajes Globales por Género y Período en {municipio_seleccionado}, {departamento_seleccionado}')
+        barras_apiladas = alt.Chart(df_filtrado).mark_bar().encode(x='PERIODO:N', y='PUNT_GLOBAL:Q', color='ESTU_GENERO:N', tooltip=['PUNT_GLOBAL:Q', 'PERIODO:N', 'ESTU_GENERO:N']).properties(width=400, height=300)
 
         # Mostrar el gráfico en Streamlit
         st.altair_chart(barras_apiladas)
@@ -194,13 +194,13 @@ def g_linea_genero_municipio(conexion, departamento_seleccionado, municipio_sele
     #Gráfico de líneas acerca de los puntajes globales por genero y período para cada departamento/municipio
     df_lin_global_deptmun = consulta_puntaje_global_por_periodo(conexion)
     if not df_lin_global_deptmun.empty:
-        st.subheader("Gráfico de líneas acerca de los puntajes globales por genero y período para cada departamento/municipio")
+        st.subheader("Gráfico de Líneas")
         
         # Se filtran los datos según la selección
         df_filtrado = df_lin_global_deptmun[(df_lin_global_deptmun['COLE_DEPTO_UBICACION'] == departamento_seleccionado) & (df_lin_global_deptmun['COLE_MCPIO_UBICACION'] == municipio_seleccionado)]
 
         # Creación del gráfico de lineas
-        grafico_lineas = alt.Chart(df_filtrado).mark_line().encode(x='PERIODO:N', y='PUNT_GLOBAL:Q', color='ESTU_GENERO:N', tooltip=['PUNT_GLOBAL:Q', 'PERIODO:N', 'ESTU_GENERO:N']).properties(width=600, height=400,title=f'Puntajes Globales por Género y Período en {municipio_seleccionado}, {departamento_seleccionado}')
+        grafico_lineas = alt.Chart(df_filtrado).mark_line().encode(x='PERIODO:N', y='PUNT_GLOBAL:Q', color='ESTU_GENERO:N', tooltip=['PUNT_GLOBAL:Q', 'PERIODO:N', 'ESTU_GENERO:N']).properties(width=400, height=300)
 
         # Mostrar el gráfico en Streamlit
         st.altair_chart(grafico_lineas)
@@ -213,13 +213,13 @@ def g_areaapiladas_genero_municipio(conexion, departamento_seleccionado, municip
     # Gráfico de areas apiladas de puntajes globales por género y período para cada departamento/municipio
     df_are_global_deptmun = consulta_puntaje_global_por_periodo(conexion)
     if not df_are_global_deptmun.empty:
-        st.subheader("Gráfico de areas apiladas de puntajes globales por género y período para cada departamento/municipio")
+        st.subheader("Gráfico de Areas Apiladas")
         
         # Se filtran los datos según la selección
         df_filtrado = df_are_global_deptmun[(df_are_global_deptmun['COLE_DEPTO_UBICACION'] == departamento_seleccionado) & (df_are_global_deptmun['COLE_MCPIO_UBICACION'] == municipio_seleccionado)]
 
         # Creación del gráfico de areas apiladas
-        areas_apiladas = alt.Chart(df_filtrado).mark_area().encode(x='PERIODO:N', y=alt.Y('PUNT_GLOBAL:Q', stack=None), color='ESTU_GENERO:N', tooltip=['PUNT_GLOBAL:Q', 'PERIODO:N', 'ESTU_GENERO:N']).properties(width=600, height=400, title=f'Puntajes Globales por Género y Período en {municipio_seleccionado}, {departamento_seleccionado}')
+        areas_apiladas = alt.Chart(df_filtrado).mark_area().encode(x='PERIODO:N', y=alt.Y('PUNT_GLOBAL:Q', stack=None), color='ESTU_GENERO:N', tooltip=['PUNT_GLOBAL:Q', 'PERIODO:N', 'ESTU_GENERO:N']).properties(width=400, height=300)
 
         # Mostrar el gráfico en Streamlit
         st.altair_chart(areas_apiladas)
@@ -230,13 +230,13 @@ def g_dipersion_genero_municipio(conexion, departamento_seleccionado, municipio_
     st.text("")
     df_disp_global_deptmun = consulta_puntaje_global_por_periodo(conexion)
     if not df_disp_global_deptmun.empty:
-        st.subheader("Gráfico de dispersión para los puntajes globales por género y período para cada departamento/municipio")
+        st.subheader("Gráfico de Dispersión")
         
         # Se filtran los datos según la selección
         df_filtrado = df_disp_global_deptmun[(df_disp_global_deptmun['COLE_DEPTO_UBICACION'] == departamento_seleccionado) & (df_disp_global_deptmun['COLE_MCPIO_UBICACION'] == municipio_seleccionado)]
 
         # Creación del gráfico de dispersión
-        dispersion_deptmun = alt.Chart(df_filtrado).mark_point().encode(x='PERIODO:N', y='PUNT_GLOBAL:Q', color='ESTU_GENERO:N', tooltip=['PUNT_GLOBAL:Q', 'PERIODO:N', 'ESTU_GENERO:N']).properties(width=600, height=400, title=f'Puntajes Globales por Género y Período en {municipio_seleccionado}, {departamento_seleccionado}').interactive()
+        dispersion_deptmun = alt.Chart(df_filtrado).mark_point().encode(x='PERIODO:N', y='PUNT_GLOBAL:Q', color='ESTU_GENERO:N', tooltip=['PUNT_GLOBAL:Q', 'PERIODO:N', 'ESTU_GENERO:N']).properties(width=400, height=300).interactive()
 
         # Mostrar el gráfico en Streamlit
         st.altair_chart(dispersion_deptmun)
@@ -251,7 +251,7 @@ def g_dipersion_genero_municipio(conexion, departamento_seleccionado, municipio_
         
 
 def g_puntajeProm_barranquilla(conexion):
-    st.markdown("---")
+
     st.header("Gráficos para los puntajes globales en Barranquilla")    
 
     # Menú de opciones para elegir cual gráfico mostrar

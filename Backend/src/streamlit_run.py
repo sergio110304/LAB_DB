@@ -54,14 +54,22 @@ def main():
         municipio_seleccionado = st.selectbox("Selecciona un municipio", df_global_deptmun[df_global_deptmun['COLE_DEPTO_UBICACION'] == departamento_seleccionado]['COLE_MCPIO_UBICACION'].unique())
     else:
         st.error('No se pudieron obtener resultados de la consulta')
-    
-    g_ba_genero_municipio(conexion, departamento_seleccionado, municipio_seleccionado)
 
-    g_linea_genero_municipio(conexion, departamento_seleccionado, municipio_seleccionado)
+    with st.container():
+        left_column, right_column = st.columns(2)
+        with left_column:
+            g_ba_genero_municipio(conexion, departamento_seleccionado, municipio_seleccionado)
 
-    g_areaapiladas_genero_municipio(conexion, departamento_seleccionado, municipio_seleccionado)
+        with right_column:
+            g_linea_genero_municipio(conexion, departamento_seleccionado, municipio_seleccionado)
 
-    g_dipersion_genero_municipio(conexion, departamento_seleccionado, municipio_seleccionado)       
+        row2_col1, row2_col2 = st.columns(2)
+        with row2_col1:
+            g_areaapiladas_genero_municipio(conexion, departamento_seleccionado, municipio_seleccionado)
+
+        with row2_col2:
+            g_dipersion_genero_municipio(conexion, departamento_seleccionado, municipio_seleccionado)       
+
 
     st.markdown("<a name='puntajesquilla'></a>", unsafe_allow_html=True)
     st.markdown("---")
