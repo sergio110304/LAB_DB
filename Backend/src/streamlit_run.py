@@ -2,7 +2,7 @@ from Graficas_query import *
 from conexion_db import conectar_servidor
 
 def main():
-    conexion = conectar_servidor()
+    conexion = conectar_servidor() # se establece conexión
 
     # Título del dashboard
     st.title('Resultados Prueba Saber 2015-2022 REGIÓN CARIBE')
