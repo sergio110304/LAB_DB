@@ -1,44 +1,27 @@
 import streamlit as st
-from Querys import *
-from conexion_db import *
-import plotly.graph_objects as go
+from Backend.src.Querys import *
+from Backend.src.conexion_db import *
 import plotly.express as px
+import plotly.graph_objects as go
 import altair as alt
 
-# Main
-if __name__ == "__main__":
-    conexion = conectar_servidor() # Conexión a la base de datos
-    # Título del dashboard
-    st.markdown(
-        """
-        <div style='background-color: #F63366; padding: 10px;'>
-            <h1 style='color: white; text-align: center;'>Resultados Prueba Saber 2015-2022 REGIÓN CARIBE</h1>
-        </div>
-        """,
-        unsafe_allow_html=True
-    )
 
-    with st.sidebar:
-        st.write("Información sobre el proyecto:")
-        st.write("Es un dashboard que presenta gráficas interactivas sobre los resultados de las\
-                pruebas saber desde el 2015 hasta el 2022, especifícamente de \
-                la  Región Caribe de Colombia. ")
-        
-    st.markdown("---")
+
+def mostrar_datos(conexion):
     # Gráfica para todos los datos
     df_all = consulta_todos_los_datos(conexion)
     if df_all is not None:
-        st.subheader('Visualización de la base de datos')
+        st.subheader('Resultados de la consulta para todos los datos')
         st.write(df_all.head())
     else:
         st.error('No se pudieron obtener los resultados para todos los datos')
 
-    st.markdown("---")
+def g_puntajeProm_Asig_periodo(conexion):
     
     # Gráfica para el puntaje promedio por periodo
     df_punt = consulta_puntaje_promedio_por_periodo(conexion)
     if df_punt is not None:
-        st.subheader('Gráfico para el puntaje promedio por asignaturas en cada periodo')
+        st.subheader('Resultados de la consulta para el puntaje promedio por asignaturas en cada periodo')
         # Obtener los períodos disponibles
         periodos_disponibles = [20151, 20152, 20161, 20162, 20171, 20172, 20181, 20191,\
                                 20194, 20201, 20211, 20221, 20224]
@@ -74,12 +57,12 @@ if __name__ == "__main__":
     else:
         st.error('No se pudieron obtener los resultados para el puntaje promedio por periodo')
 
-    st.markdown("---") 
+def g_puntajeProm_Estrato(conexion):
 
     # Gráfica para el puntaje promedio por estrato
     df_estrato = consulta_puntaje_promedio_por_estrato(conexion)
     if df_estrato is not None:
-        st.subheader('Gráfico para el puntaje promedio por estrato')
+        st.subheader('Resultados de la consulta para el puntaje promedio por estrato')
         st.write('Por favor seleccione el número de estrato para observar la gráfica.')
 
         # Obtener la lista de estratos únicos
@@ -92,7 +75,7 @@ if __name__ == "__main__":
     else:
         st.error('No se pudieron obtener los resultados para el puntaje promedio por estrato')
     
-    st.markdown("---") 
+def g_puntajeProm_Dept(conexion):
 
     # Gráfico para el puntaje promedio por departamento
     df_depto = consulta_puntaje_promedio_por_departamento(conexion)
@@ -136,15 +119,15 @@ if __name__ == "__main__":
     else:
         st.error('No se pudieron obtener los resultados para el puntaje promedio por departamento')
 
-
+def g_puntajeProm_genero(conexion):
     st.markdown("---") 
     # Gráfica para el puntaje promedio por género
     df_acceso_genero = consulta_puntaje_promedio_por_genero(conexion)
     if not df_acceso_genero.empty:
-        st.subheader("Gráfico para el puntaje promedio por género para cada asignatura")  
+        st.subheader("Gráfico para el puntaje promedio por género")  
 
         # Widget para seleccionar el tipo de promedio
-        promedio_selector = st.radio("Seleccione la asignatura:", 
+        promedio_selector = st.radio("Selecciona el tipo de promedio:", 
                                 ["Promedio_Puntaje_Ingles", "Promedio_Puntaje_Ciencias_Naturales", 
                                 "Promedio_Puntaje_Lectura_Critica", "Promedio_Puntaje_Matematicas", 
                                 "Promedio_Puntaje_Sociales_Ciudadanas", "Puntaje_Promedio_Total"])
@@ -163,12 +146,12 @@ if __name__ == "__main__":
             # Mostrar el gráfico de barras
             st.plotly_chart(fig)
         else: 
-            st.write('Por favor seleccione una asignatura para observar la gráfica.')  
+            st.write('Por favor seleccione un tipo de promedio para observar la gráfica.')  
 
     else:
         st.error('No se pudieron obtener resultados de la consulta')
 
-    #*****************************************************************************************************
+def consulta_global_municipios(conexion):
     st.markdown("---")
     st.header("Gráficos para los puntajes globales por género y período para cada departamento/municipio")
 
@@ -180,10 +163,17 @@ if __name__ == "__main__":
         municipio_seleccionado = st.selectbox("Selecciona un municipio", df_global_deptmun[df_global_deptmun['COLE_DEPTO_UBICACION'] == departamento_seleccionado]['COLE_MCPIO_UBICACION'].unique())
     else:
         st.error('No se pudieron obtener resultados de la consulta')
-    
-    st.text("")
 
-    # Gráfico de barras apiladas de puntajes globales por género y período para cada departamento/municipio
+
+        #######################################################################################################################################################
+        #######################################################################################################################################################	
+        #######################################################################################################################################################
+        #######################################################################################################################################################
+    
+
+def g_ba_genero_municipio(conexion, departamento_seleccionado, municipio_seleccionado):
+    st.text("")
+        # Gráfico de barras apiladas de puntajes globales por género y período para cada departamento/municipio
     df_bar_global_deptmun = consulta_puntaje_global_por_periodo(conexion)
     if not df_bar_global_deptmun.empty:
         st.subheader("Gráfico de barras apiladas de puntajes globales por género y período para cada departamento/municipio")
@@ -199,6 +189,7 @@ if __name__ == "__main__":
     else:
         st.error('No se pudieron obtener resultados de la consulta')
 
+def g_linea_genero_municipio(conexion, departamento_seleccionado, municipio_seleccionado):
     st.text("")
 
     #Gráfico de líneas acerca de los puntajes globales por genero y período para cada departamento/municipio
@@ -217,6 +208,7 @@ if __name__ == "__main__":
     else:
         st.error('No se pudieron obtener resultados de la consulta')
 
+def g_areaapiladas_genero_municipio(conexion, departamento_seleccionado, municipio_seleccionado):
     st.text("")
 
     # Gráfico de areas apiladas de puntajes globales por género y período para cada departamento/municipio
@@ -235,9 +227,8 @@ if __name__ == "__main__":
     else:
         st.error('No se pudieron obtener resultados de la consulta')
 
+def g_dipersion_genero_municipio(conexion, departamento_seleccionado, municipio_seleccionado):
     st.text("")
-
-    # Gráfico de dispersión para los puntajes globales por género y período para cada departamento/municipio
     df_disp_global_deptmun = consulta_puntaje_global_por_periodo(conexion)
     if not df_disp_global_deptmun.empty:
         st.subheader("Gráfico de dispersión para los puntajes globales por género y período para cada departamento/municipio")
@@ -252,8 +243,15 @@ if __name__ == "__main__":
         st.altair_chart(dispersion_deptmun)
     else:
         st.error('No se pudieron obtener resultados de la consulta')
-    
-    #*****************************************************************************************************    
+
+
+        #######################################################################################################################################################
+        #######################################################################################################################################################
+        #######################################################################################################################################################
+        #######################################################################################################################################################
+        
+
+def g_puntajeProm_barranquilla(conexion):
     st.markdown("---")
     st.header("Gráficos para los puntajes globales en Barranquilla")    
 
@@ -301,7 +299,4 @@ if __name__ == "__main__":
     else:
          st.error('No se pudieron obtener resultados de la seleccíon')
 
-    # Cerrar conexión a la base de datos
-    conexion.close()
-else:
-    st.error('No se pudo establecer la conexión a la base de datos')
+    
