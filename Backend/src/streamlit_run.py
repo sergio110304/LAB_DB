@@ -9,7 +9,7 @@ def main():
 
     with st.sidebar:
         st.write("Información sobre el proyecto")
-        st.write("Es un dashboard que presenta cinco gráficas interactivas sobre los resultados de las\
+        st.write("Es un dashboard que presenta gráficas interactivas sobre los resultados de las\
                 pruebas saber desde el 2015 hasta el 2022, especifícamente de \
                 la  Región Caribe de Colombia. ")
         st.sidebar.markdown("# Índice")
@@ -17,7 +17,7 @@ def main():
         st.sidebar.write("- <a href='#puntajepromedioasig' style='text-decoration: none; color: inherit;'>Puntaje promedio de las Asignaturas</a>", unsafe_allow_html=True)
         st.sidebar.write("- <a href='#puntapromestrato' style='text-decoration: none; color: inherit;'>Puntaje promedio por Estrato</a>", unsafe_allow_html=True)
         st.sidebar.write("- <a href='#pntapromdepa' style='text-decoration: none; color: inherit;'>Puntaje promedio por Departamento</a>", unsafe_allow_html=True)
-        st.sidebar.write("- <a href='#puntapromgenero' style='text-decoration: none; color: inherit;'>Puntaje promedio por Genero</a>", unsafe_allow_html=True)
+        st.sidebar.write("- <a href='#puntapromgenero' style='text-decoration: none; color: inherit;'>Puntaje promedio por Género</a>", unsafe_allow_html=True)
         st.sidebar.write("- <a href='#puntamunicipios' style='text-decoration: none; color: inherit;'>Puntajes globales por género y período para cada municipio</a>", unsafe_allow_html=True)
         st.sidebar.write("- <a href='#puntajesquilla' style='text-decoration: none; color: inherit;'>Gráficos para los puntajes globales en Barranquilla</a>", unsafe_allow_html=True)
 

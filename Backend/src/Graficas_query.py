@@ -83,37 +83,33 @@ def g_puntajeProm_Dept(conexion):
         departamentos = df_depto['COLE_DEPTO_UBICACION'].unique() 
         st.subheader('Puntaje promedio por Departamento')
 
-        select_depto = st.multiselect('Seleccione los departamentos', departamentos)
+        select_depto = st.multiselect('Seleccione departamentos para observar la gráfica', departamentos)
 
-        if select_depto:
-            # Obtener los datos de los departamentos seleccionados y ordenarlos por el eje x (PERIODO)
-            data_seleccionado = df_depto[df_depto['COLE_DEPTO_UBICACION'].isin(select_depto)].sort_values(by='PERIODO')
-            data_seleccionado['PERIODO'] = data_seleccionado['PERIODO'].astype(str)
+        # Obtener los datos de los departamentos seleccionados y ordenarlos por el eje x (PERIODO)
+        data_seleccionado = df_depto[df_depto['COLE_DEPTO_UBICACION'].isin(select_depto)].sort_values(by='PERIODO')
+        data_seleccionado['PERIODO'] = data_seleccionado['PERIODO'].astype(str)
 
-            traces = []
-            for depto in select_depto:
-                trace = go.Scatter(
-                    y=data_seleccionado[data_seleccionado['COLE_DEPTO_UBICACION'] == depto]['Puntaje_Promedio'].values,
-                    x=data_seleccionado[data_seleccionado['COLE_DEPTO_UBICACION'] == depto]['PERIODO'],
-                    mode='lines+markers',
-                    name=depto,
-                    visible=True
-                )
-                traces.append(trace)
-
-            fig = go.Figure(traces)
-
-            fig.update_layout(
-                title='Promedio de los estudiantes por departamento',
-                yaxis_title='Puntaje Promedio',
-                xaxis_title='Periodo',
-                xaxis=dict(type='category')  # Tipo de eje x como 'category' para que se traten los valores como cadenas de texto
+        traces = []
+        for depto in select_depto:
+            trace = go.Scatter(
+                y=data_seleccionado[data_seleccionado['COLE_DEPTO_UBICACION'] == depto]['Puntaje_Promedio'].values,
+                x=data_seleccionado[data_seleccionado['COLE_DEPTO_UBICACION'] == depto]['PERIODO'],
+                mode='lines+markers',
+                name=depto,
+                visible=True
             )
+            traces.append(trace)
 
-            st.plotly_chart(fig)
+        fig = go.Figure(traces)
 
-        else:
-            st.write('Por favor seleccione uno o más departamentos para observar la gráfica.')
+        fig.update_layout(
+            title='Promedio de los estudiantes por departamento',
+            yaxis_title='Puntaje Promedio',
+            xaxis_title='Periodo',
+            xaxis=dict(type='category')  # Tipo de eje x como 'category' para que se traten los valores como cadenas de texto
+        )
+
+        st.plotly_chart(fig)
 
     else:
         st.error('No se pudieron obtener los resultados para el puntaje promedio por departamento')
