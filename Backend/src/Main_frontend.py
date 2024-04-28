@@ -14,8 +14,8 @@ if __name__ == "__main__":
     st.title('Resultados Prueba Saber 2015-2022 REGIÓN CARIBE')
 
     with st.sidebar:
-        st.write("Información sobre el proyecto")
-        st.write("Es un dashboard que presenta cinco gráficas interactivas sobre los resultados de las\
+        st.write("Información sobre el proyecto:")
+        st.write("Es un dashboard que presenta gráficas interactivas sobre los resultados de las\
                 pruebas saber desde el 2015 hasta el 2022, especifícamente de \
                 la  Región Caribe de Colombia. ")
         
@@ -23,7 +23,7 @@ if __name__ == "__main__":
     # Gráfica para todos los datos
     df_all = consulta_todos_los_datos(conexion)
     if df_all is not None:
-        st.subheader('Resultados de la consulta para todos los datos')
+        st.subheader('Visualización de la base de datos')
         st.write(df_all.head())
     else:
         st.error('No se pudieron obtener los resultados para todos los datos')
@@ -33,7 +33,7 @@ if __name__ == "__main__":
     # Gráfica para el puntaje promedio por periodo
     df_punt = consulta_puntaje_promedio_por_periodo(conexion)
     if df_punt is not None:
-        st.subheader('Resultados de la consulta para el puntaje promedio por asignaturas en cada periodo')
+        st.subheader('Gráfico para el puntaje promedio por asignaturas en cada periodo')
         # Obtener los períodos disponibles
         periodos_disponibles = [20151, 20152, 20161, 20162, 20171, 20172, 20181, 20191,\
                                 20194, 20201, 20211, 20221, 20224]
@@ -74,7 +74,7 @@ if __name__ == "__main__":
     # Gráfica para el puntaje promedio por estrato
     df_estrato = consulta_puntaje_promedio_por_estrato(conexion)
     if df_estrato is not None:
-        st.subheader('Resultados de la consulta para el puntaje promedio por estrato')
+        st.subheader('Gráfico para el puntaje promedio por estrato')
         st.write('Por favor seleccione el número de estrato para observar la gráfica.')
 
         # Obtener la lista de estratos únicos
@@ -169,10 +169,10 @@ if __name__ == "__main__":
     # Gráfica para el puntaje promedio por género
     df_acceso_genero = consulta_puntaje_promedio_por_genero(conexion)
     if not df_acceso_genero.empty:
-        st.subheader("Gráfico para el puntaje promedio por género")  
+        st.subheader("Gráfico para el puntaje promedio por género para cada asignatura")  
 
         # Widget para seleccionar el tipo de promedio
-        promedio_selector = st.radio("Selecciona el tipo de promedio:", 
+        promedio_selector = st.radio("Seleccione la asignatura:", 
                                 ["Promedio_Puntaje_Ingles", "Promedio_Puntaje_Ciencias_Naturales", 
                                 "Promedio_Puntaje_Lectura_Critica", "Promedio_Puntaje_Matematicas", 
                                 "Promedio_Puntaje_Sociales_Ciudadanas", "Puntaje_Promedio_Total"])
@@ -191,7 +191,7 @@ if __name__ == "__main__":
             # Mostrar el gráfico de barras
             st.plotly_chart(fig)
         else: 
-            st.write('Por favor seleccione un tipo de promedio para observar la gráfica.')  
+            st.write('Por favor seleccione una asignatura para observar la gráfica.')  
 
     else:
         st.error('No se pudieron obtener resultados de la consulta')
