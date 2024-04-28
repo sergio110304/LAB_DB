@@ -14,6 +14,7 @@ def main():
                 la  Región Caribe de Colombia. ")
         st.sidebar.markdown("# Índice")
         st.sidebar.write("- <a href='#basededatos' style='text-decoration: none; color: inherit;'>Base de datos</a>", unsafe_allow_html=True)
+        st.sidebar.write("- <a href='#mapa' style='text-decoration: none; color: inherit;'>Mapa de puntajes promedio</a>", unsafe_allow_html=True)
         st.sidebar.write("- <a href='#puntajepromedioasig' style='text-decoration: none; color: inherit;'>Puntaje promedio de las Asignaturas</a>", unsafe_allow_html=True)
         st.sidebar.write("- <a href='#puntapromestrato' style='text-decoration: none; color: inherit;'>Puntaje promedio por Estrato</a>", unsafe_allow_html=True)
         st.sidebar.write("- <a href='#pntapromdepa' style='text-decoration: none; color: inherit;'>Puntaje promedio por Departamento</a>", unsafe_allow_html=True)
@@ -25,6 +26,10 @@ def main():
     st.markdown("<a name='basededatos'></a>", unsafe_allow_html=True)
     st.markdown("---")
     mostrar_datos(conexion)
+
+    st.markdown("<a name='mapa'></a>", unsafe_allow_html=True)
+    st.markdown("---")
+    dibujar_mapa(conexion)
 
     st.markdown("<a name='puntajepromedioasig'></a>", unsafe_allow_html=True)
     st.markdown("---")

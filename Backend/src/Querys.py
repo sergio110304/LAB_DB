@@ -120,3 +120,11 @@ def consulta_puntaje_global_por_periodo(conexion):
             order by r.PUNT_GLOBAL desc
             '''
     return realizar_consulta(conexion, query)
+
+def consulta_puntaje_global_por_municipio(conexion):
+    query = '''
+            SELECT COLE_DEPTO_UBICACION as Departamento, AVG(PUNT_GLOBAL) as Puntaje_Global
+            FROM Resultados_Saber_11_R_Caribe_2015_2022
+            GROUP BY COLE_DEPTO_UBICACION
+            '''
+    return realizar_consulta(conexion, query)

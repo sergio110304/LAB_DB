@@ -4,7 +4,7 @@ from conexion_db import *
 import plotly.express as px
 import plotly.graph_objects as go
 import altair as alt
-
+import json
 
 def mostrar_datos(conexion):
     # Gráfica para todos los datos
@@ -293,3 +293,26 @@ def g_puntajeProm_barranquilla(conexion):
             st.error('No se pudieron obtener resultados de la consulta')
     else:
          st.error('No se pudieron obtener resultados de la seleccíon')
+
+
+
+def dibujar_mapa(conexion):
+    st.header("Mapa de los puntajes globales por municipio")
+    df = consulta_puntaje_global_por_municipio(conexion)
+
+    # Cargar el archivo GeoJSON más detallado
+    #geojson = 'https://gist.githubusercontent.com/john-guerra/43c7656821069d00dcbc/raw/be6a6e239cd5b5b803c6e7c2ec405b793a9064dd/Colombia.geo.json'
+    
+    # Cargar el archivo GeoJSON local
+    with open('Backend/src/Colombia.geo.json') as f:
+        geojson = json.load(f)
+    # Crear la gráfica de dispersión geográfica con el archivo GeoJSON más detallado
+    fig = px.choropleth_mapbox(df, geojson=geojson, locations='Departamento', color='Puntaje_Global',
+                                featureidkey='properties.NOMBRE_DPT', mapbox_style="carto-positron",
+                                center={"lat": 10.074048, "lon": -74.601469}, zoom=5,
+                                opacity=0.5, labels={'Puntaje_Global':'Puntaje Global'},
+                                color_continuous_scale="Viridis")
+    
+
+    # Mostrar la gráfica
+    st.plotly_chart(fig)
