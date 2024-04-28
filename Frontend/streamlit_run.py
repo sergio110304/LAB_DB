@@ -8,11 +8,18 @@ def main():
     conexion = conectar_servidor()
 
     # Título del dashboard
-    st.title('Resultados Prueba Saber 2015-2022 REGIÓN CARIBE')
+    st.markdown(
+        """
+        <div style='background-color: #F63366; padding: 10px;'>
+            <h1 style='color: white; text-align: center;'>Resultados Prueba Saber 2015-2022 REGIÓN CARIBE</h1>
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
 
     with st.sidebar:
-        st.write("Información sobre el proyecto")
-        st.write("Es un dashboard que presenta cinco gráficas interactivas sobre los resultados de las\
+        st.write("Información sobre el proyecto:")
+        st.write("Es un dashboard que presenta gráficas interactivas sobre los resultados de las\
                 pruebas saber desde el 2015 hasta el 2022, especifícamente de \
                 la  Región Caribe de Colombia. ")
         

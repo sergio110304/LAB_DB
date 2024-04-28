@@ -21,7 +21,7 @@ def g_puntajeProm_Asig_periodo(conexion):
     # Gráfica para el puntaje promedio por periodo
     df_punt = consulta_puntaje_promedio_por_periodo(conexion)
     if df_punt is not None:
-        st.subheader('Resultados de la consulta para el puntaje promedio por asignaturas en cada periodo')
+        st.subheader('Grafico para el puntaje promedio por asignaturas en cada periodo')
         # Obtener los períodos disponibles
         periodos_disponibles = [20151, 20152, 20161, 20162, 20171, 20172, 20181, 20191,\
                                 20194, 20201, 20211, 20221, 20224]
@@ -124,10 +124,10 @@ def g_puntajeProm_genero(conexion):
     # Gráfica para el puntaje promedio por género
     df_acceso_genero = consulta_puntaje_promedio_por_genero(conexion)
     if not df_acceso_genero.empty:
-        st.subheader("Gráfico para el puntaje promedio por género")  
+        st.subheader("Gráfico para el puntaje promedio por género para cada asignatura")  
 
         # Widget para seleccionar el tipo de promedio
-        promedio_selector = st.radio("Selecciona el tipo de promedio:", 
+        promedio_selector = st.radio("Seleccione la asignatura:", 
                                 ["Promedio_Puntaje_Ingles", "Promedio_Puntaje_Ciencias_Naturales", 
                                 "Promedio_Puntaje_Lectura_Critica", "Promedio_Puntaje_Matematicas", 
                                 "Promedio_Puntaje_Sociales_Ciudadanas", "Puntaje_Promedio_Total"])
@@ -146,7 +146,7 @@ def g_puntajeProm_genero(conexion):
             # Mostrar el gráfico de barras
             st.plotly_chart(fig)
         else: 
-            st.write('Por favor seleccione un tipo de promedio para observar la gráfica.')  
+            st.write('Por favor seleccione una asignatura para observar la gráfica.')  
 
     else:
         st.error('No se pudieron obtener resultados de la consulta')
