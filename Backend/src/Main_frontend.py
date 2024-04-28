@@ -11,7 +11,14 @@ import altair as alt
 if __name__ == "__main__":
     conexion = conectar_servidor() # Conexión a la base de datos
     # Título del dashboard
-    st.title('Resultados Prueba Saber 2015-2022 REGIÓN CARIBE')
+    st.markdown(
+        """
+        <div style='background-color: #F63366; padding: 10px;'>
+            <h1 style='color: white; text-align: center;'>Resultados Prueba Saber 2015-2022 REGIÓN CARIBE</h1>
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
 
     with st.sidebar:
         st.write("Información sobre el proyecto:")
