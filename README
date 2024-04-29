@@ -6,7 +6,7 @@ venv\Scripts\activate
 deactivate
 
 
-# Integrantes del grupo: Sergio Rodriguez, Jhon Jimenez, Mariana Guerrero. 
+## Integrantes del grupo: Sergio Rodriguez, Jhon Jimenez, Mariana Guerrero. 
 
 El proyecto incluye un source code realizado para generar gráficos interactivos en Streamlit, detallando los resultados de las pruebas saber realizadas en la Región Caribe de Colombia desde el año 2015 hasta el 2022. Estos gráficos proporcionan una visión exhaustiva y detallada que permite un análisis profundo de la evolución y tendencias a lo largo de los años. 
 
