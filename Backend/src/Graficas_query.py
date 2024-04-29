@@ -1,6 +1,6 @@
 import streamlit as st
 from Querys import *
-from conexion_db import *
+from conexion import *
 import plotly.express as px
 import plotly.graph_objects as go
 import altair as alt
@@ -29,19 +29,19 @@ def g_puntajeProm_Asig_periodo(conexion):
         periodo_seleccionado = st.select_slider("Seleccione el período:", options=periodos_disponibles)
 
         # Filtrar el DataFrame para el período seleccionado
-        df_periodo_seleccionado = df_punt[df_punt['PERIODO'] == periodo_seleccionado]
+        df_periodo_seleccionado = df_punt[df_punt['periodo'] == periodo_seleccionado]
 
         if not df_periodo_seleccionado.empty:
             # Eliminar la columna de PERIODO para evitar duplicados
-            df_periodo_seleccionado = df_periodo_seleccionado.drop(columns=['PERIODO'])
+            df_periodo_seleccionado = df_periodo_seleccionado.drop(columns=['periodo'])
 
             # Convertir el DataFrame a un formato adecuado para la gráfica de barras
-            df_melted = df_periodo_seleccionado.melt(var_name='Asignatura', value_name='Promedio')
+            df_melted = df_periodo_seleccionado.melt(var_name='asignatura', value_name='promedio')
 
             # Crear gráfico interactivo de barras con Plotly
-            fig = px.bar(df_melted, x='Asignatura', y='Promedio', color='Asignatura',
+            fig = px.bar(df_melted, x='asignatura', y='promedio', color='asignatura',
                         title=f"Promedio de Puntaje por periodo {periodo_seleccionado}",
-                        labels={"Promedio": "Promedio de Puntaje"},
+                        labels={"promedio": "Promedio de Puntaje"},
                         template="plotly_white")
 
             fig.update_layout(transition_duration=500)
@@ -65,9 +65,9 @@ def g_puntajeProm_Estrato(conexion):
         st.write('Por favor seleccione el número de estrato para observar la gráfica.')
 
         # Obtener la lista de estratos únicos
-        estratos = df_estrato['FAMI_ESTRATOVIVIENDA'].unique()
+        estratos = df_estrato['fami_estratovivienda'].unique()
         # Crear el Sunburst
-        fig = px.sunburst(df_estrato, path=['FAMI_ESTRATOVIVIENDA', 'COLE_AREA_UBICACION'], values='Puntaje_Promedio')
+        fig = px.sunburst(df_estrato, path=['fami_estratovivienda', 'cole_area_ubicacion'], values='puntaje_promedio')
         # Mostrar el Sunburst 
         st.plotly_chart(fig)
         
@@ -80,20 +80,20 @@ def g_puntajeProm_Dept(conexion):
     df_depto = consulta_puntaje_promedio_por_departamento(conexion)
 
     if df_depto is not None:
-        departamentos = df_depto['COLE_DEPTO_UBICACION'].unique() 
+        departamentos = df_depto['cole_depto_ubicacion'].unique() 
         st.subheader('Puntaje promedio por Departamento')
 
         select_depto = st.multiselect('Seleccione departamentos para observar la gráfica', departamentos)
 
-        # Obtener los datos de los departamentos seleccionados y ordenarlos por el eje x (PERIODO)
-        data_seleccionado = df_depto[df_depto['COLE_DEPTO_UBICACION'].isin(select_depto)].sort_values(by='PERIODO')
-        data_seleccionado['PERIODO'] = data_seleccionado['PERIODO'].astype(str)
+        # Obtener los datos de los departamentos seleccionados y ordenarlos por el eje x (periodo)
+        data_seleccionado = df_depto[df_depto['cole_depto_ubicacion'].isin(select_depto)].sort_values(by='periodo')
+        data_seleccionado['periodo'] = data_seleccionado['periodo'].astype(str)
 
         traces = []
         for depto in select_depto:
             trace = go.Scatter(
-                y=data_seleccionado[data_seleccionado['COLE_DEPTO_UBICACION'] == depto]['Puntaje_Promedio'].values,
-                x=data_seleccionado[data_seleccionado['COLE_DEPTO_UBICACION'] == depto]['PERIODO'],
+                y=data_seleccionado[data_seleccionado['cole_depto_ubicacion'] == depto]['puntaje_promedio'].values,
+                x=data_seleccionado[data_seleccionado['cole_depto_ubicacion'] == depto]['periodo'],
                 mode='lines+markers',
                 name=depto,
                 visible=True
@@ -113,27 +113,7 @@ def g_puntajeProm_Dept(conexion):
 
     else:
         st.error('No se pudieron obtener los resultados para el puntaje promedio por departamento')
-def dibujar_mapa(conexion):
-    st.header("Mapa de los puntajes globales por departamento")
-    df = consulta_puntaje_global_por_municipio(conexion)
 
-    # Cargar el archivo GeoJSON más detallado
-    geojson = 'https://gist.githubusercontent.com/john-guerra/43c7656821069d00dcbc/raw/be6a6e239cd5b5b803c6e7c2ec405b793a9064dd/Colombia.geo.json'
-    
-    # Cargar el archivo GeoJSON local
-    #with open('Backend/src/Colombia.geo.json') as f:
-    #    geojson = json.load(f)
-    # Crear la gráfica de dispersión geográfica con el archivo GeoJSON más detallado
-    fig = px.choropleth_mapbox(df, geojson=geojson, locations='Departamento', color='Puntaje_Global',
-                                featureidkey='properties.NOMBRE_DPT', mapbox_style="carto-positron",
-                                center={"lat": 10.074048, "lon": -74.601469}, zoom=5,
-                                opacity=0.5, labels={'Puntaje_Global':'Puntaje Global'},
-                                color_continuous_scale="Viridis")
-    
-
-    # Mostrar la gráfica
-    st.plotly_chart(fig)
-    
 def g_puntajeProm_genero(conexion):
 
     # Gráfica para el puntaje promedio por género
@@ -143,13 +123,13 @@ def g_puntajeProm_genero(conexion):
 
         # Widget para seleccionar el tipo de promedio
         promedio_selector = st.radio("Selecciona el tipo de promedio:", 
-                                ["Promedio_Puntaje_Ingles", "Promedio_Puntaje_Ciencias_Naturales", 
-                                "Promedio_Puntaje_Lectura_Critica", "Promedio_Puntaje_Matematicas", 
-                                "Promedio_Puntaje_Sociales_Ciudadanas", "Puntaje_Promedio_Total"])
+                                ["promedio_puntaje_ingles", "promedio_puntaje_ciencias_naturales", 
+                                "promedio_puntaje_lectura_critica", "promedio_puntaje_matematicas", 
+                                "promedio_puntaje_sociales_ciudadanas", "puntaje_promedio_total"])
         if promedio_selector: 
             # Crear gráfico de barras con Plotly
-            fig = px.bar(df_acceso_genero, x="ESTU_GENERO", y=promedio_selector, color="ESTU_GENERO",
-                        labels={"value": "Promedio de puntaje", "ESTU_GENERO": "Género"},
+            fig = px.bar(df_acceso_genero, x="estu_genero", y=promedio_selector, color="estu_genero",
+                        labels={"value": "Promedio de puntaje", "estu_genero": "Género"},
                         title=f"Promedio de puntaje por género ({promedio_selector})",
                         template="plotly_white")
 
@@ -174,8 +154,8 @@ def consulta_global_municipios(conexion):
     if not df_global_deptmun.empty:
         st.subheader("Para las siguientes gráficas seleccione el departamento/municipio que desea consultar:")
         # Se agregan widgets de selección para el departamento y municipio
-        departamento_seleccionado = st.selectbox("Selecciona un departamento", df_global_deptmun['COLE_DEPTO_UBICACION'].unique())
-        municipio_seleccionado = st.selectbox("Selecciona un municipio", df_global_deptmun[df_global_deptmun['COLE_DEPTO_UBICACION'] == departamento_seleccionado]['COLE_MCPIO_UBICACION'].unique())
+        departamento_seleccionado = st.selectbox("Selecciona un departamento", df_global_deptmun['cole_depto_ubicacion'].unique())
+        municipio_seleccionado = st.selectbox("Selecciona un municipio", df_global_deptmun[df_global_deptmun['cole_depto_ubicacion'] == departamento_seleccionado]['cole_mcpio_ubicacion'].unique())
     else:
         st.error('No se pudieron obtener resultados de la consulta')
 
@@ -194,10 +174,10 @@ def g_ba_genero_municipio(conexion, departamento_seleccionado, municipio_selecci
         st.subheader("Gráfico de Barras Apiladas")
 
         # Se filtran los datos según la selección
-        df_filtrado = df_bar_global_deptmun[(df_bar_global_deptmun['COLE_DEPTO_UBICACION'] == departamento_seleccionado) & (df_bar_global_deptmun['COLE_MCPIO_UBICACION'] == municipio_seleccionado)]
+        df_filtrado = df_bar_global_deptmun[(df_bar_global_deptmun['cole_depto_ubicacion'] == departamento_seleccionado) & (df_bar_global_deptmun['cole_mcpio_ubicacion'] == municipio_seleccionado)]
 
         # Creación del gráfico de barras apiladas
-        barras_apiladas = alt.Chart(df_filtrado).mark_bar().encode(x='PERIODO:N', y='PUNT_GLOBAL:Q', color='ESTU_GENERO:N', tooltip=['PUNT_GLOBAL:Q', 'PERIODO:N', 'ESTU_GENERO:N']).properties(width=400, height=300)
+        barras_apiladas = alt.Chart(df_filtrado).mark_bar().encode(x='periodo:N', y='punt_global:Q', color='estu_genero:N', tooltip=['punt_global:Q', 'periodo:N', 'estu_genero:N']).properties(width=400, height=300)
 
         # Mostrar el gráfico en Streamlit
         st.altair_chart(barras_apiladas)
@@ -213,10 +193,10 @@ def g_linea_genero_municipio(conexion, departamento_seleccionado, municipio_sele
         st.subheader("Gráfico de Líneas")
         
         # Se filtran los datos según la selección
-        df_filtrado = df_lin_global_deptmun[(df_lin_global_deptmun['COLE_DEPTO_UBICACION'] == departamento_seleccionado) & (df_lin_global_deptmun['COLE_MCPIO_UBICACION'] == municipio_seleccionado)]
+        df_filtrado = df_lin_global_deptmun[(df_lin_global_deptmun['cole_depto_ubicacion'] == departamento_seleccionado) & (df_lin_global_deptmun['cole_mcpio_ubicacion'] == municipio_seleccionado)]
 
         # Creación del gráfico de lineas
-        grafico_lineas = alt.Chart(df_filtrado).mark_line().encode(x='PERIODO:N', y='PUNT_GLOBAL:Q', color='ESTU_GENERO:N', tooltip=['PUNT_GLOBAL:Q', 'PERIODO:N', 'ESTU_GENERO:N']).properties(width=400, height=300)
+        grafico_lineas = alt.Chart(df_filtrado).mark_line().encode(x='periodo:N', y='punt_global:Q', color='estu_genero:N', tooltip=['punt_global:Q', 'periodo:N', 'estu_genero:N']).properties(width=400, height=300)
 
         # Mostrar el gráfico en Streamlit
         st.altair_chart(grafico_lineas)
@@ -232,10 +212,10 @@ def g_areaapiladas_genero_municipio(conexion, departamento_seleccionado, municip
         st.subheader("Gráfico de Areas Apiladas")
         
         # Se filtran los datos según la selección
-        df_filtrado = df_are_global_deptmun[(df_are_global_deptmun['COLE_DEPTO_UBICACION'] == departamento_seleccionado) & (df_are_global_deptmun['COLE_MCPIO_UBICACION'] == municipio_seleccionado)]
+        df_filtrado = df_are_global_deptmun[(df_are_global_deptmun['cole_depto_ubicacion'] == departamento_seleccionado) & (df_are_global_deptmun['cole_mcpio_ubicacion'] == municipio_seleccionado)]
 
         # Creación del gráfico de areas apiladas
-        areas_apiladas = alt.Chart(df_filtrado).mark_area().encode(x='PERIODO:N', y=alt.Y('PUNT_GLOBAL:Q', stack=None), color='ESTU_GENERO:N', tooltip=['PUNT_GLOBAL:Q', 'PERIODO:N', 'ESTU_GENERO:N']).properties(width=400, height=300)
+        areas_apiladas = alt.Chart(df_filtrado).mark_area().encode(x='periodo:N', y=alt.Y('punt_global:Q', stack=None), color='estu_genero:N', tooltip=['punt_global:Q', 'periodo:N', 'estu_genero:N']).properties(width=400, height=300)
 
         # Mostrar el gráfico en Streamlit
         st.altair_chart(areas_apiladas)
@@ -249,10 +229,10 @@ def g_dipersion_genero_municipio(conexion, departamento_seleccionado, municipio_
         st.subheader("Gráfico de Dispersión")
         
         # Se filtran los datos según la selección
-        df_filtrado = df_disp_global_deptmun[(df_disp_global_deptmun['COLE_DEPTO_UBICACION'] == departamento_seleccionado) & (df_disp_global_deptmun['COLE_MCPIO_UBICACION'] == municipio_seleccionado)]
+        df_filtrado = df_disp_global_deptmun[(df_disp_global_deptmun['cole_depto_ubicacion'] == departamento_seleccionado) & (df_disp_global_deptmun['cole_mcpio_ubicacion'] == municipio_seleccionado)]
 
         # Creación del gráfico de dispersión
-        dispersion_deptmun = alt.Chart(df_filtrado).mark_point().encode(x='PERIODO:N', y='PUNT_GLOBAL:Q', color='ESTU_GENERO:N', tooltip=['PUNT_GLOBAL:Q', 'PERIODO:N', 'ESTU_GENERO:N']).properties(width=400, height=300).interactive()
+        dispersion_deptmun = alt.Chart(df_filtrado).mark_point().encode(x='periodo:N', y='punt_global:Q', color='estu_genero:N', tooltip=['punt_global:Q', 'periodo:N', 'estu_genero:N']).properties(width=400, height=300).interactive()
 
         # Mostrar el gráfico en Streamlit
         st.altair_chart(dispersion_deptmun)
@@ -281,7 +261,7 @@ def g_puntajeProm_barranquilla(conexion):
         if not df_area_global_baq.empty:
             st.subheader("Gráfico de area para los puntajes globales en Barranquilla por periodo")
             # Crear la gráfica de area
-            grafica = alt.Chart(df_area_global_baq).mark_area().encode(x='PERIODO', y='PUNT_GLOBAL')
+            grafica = alt.Chart(df_area_global_baq).mark_area().encode(x='periodo', y='punt_global')
             st.altair_chart(grafica, use_container_width=True)
         else:
             st.error('No se pudieron obtener resultados de la consulta')       
@@ -293,7 +273,7 @@ def g_puntajeProm_barranquilla(conexion):
         if not df_hist_global_baq.empty:
             st.subheader("Histograma de puntajes globales por período en Barranquilla")
             # Crear el histograma
-            histograma = alt.Chart(df_hist_global_baq).mark_bar().encode(alt.X("PUNT_GLOBAL:Q", bin=alt.Bin(step=50)), y='count()', color='PERIODO:N').properties(width=600, height=400)
+            histograma = alt.Chart(df_hist_global_baq).mark_bar().encode(alt.X("punt_global:Q", bin=alt.Bin(step=50)), y='count()', color='periodo:N').properties(width=600, height=400)
             # Mostrar el gráfico en Streamlit
             st.altair_chart(histograma)
         else:
@@ -306,7 +286,7 @@ def g_puntajeProm_barranquilla(conexion):
         if not df_disp_global_baq.empty:
             st.subheader("Gráfico de dispersión de puntajes globales por género en Barranquilla")
             # Crear el gráfico
-            dispersion = alt.Chart(df_disp_global_baq).mark_circle().encode(x='PUNT_GLOBAL:Q', y='ESTU_GENERO:N', color='ESTU_GENERO:N',tooltip=['PUNT_GLOBAL:Q', 'ESTU_GENERO:N']).properties(width=600, height=400)
+            dispersion = alt.Chart(df_disp_global_baq).mark_circle().encode(x='punt_global:Q', y='estu_genero:N', color='estu_genero:N',tooltip=['punt_global:Q', 'estu_genero:N']).properties(width=600, height=400)
             # Mostrar el gráfico en Streamlit
             st.altair_chart(dispersion)
         else:
@@ -316,3 +296,23 @@ def g_puntajeProm_barranquilla(conexion):
 
 
 
+def dibujar_mapa(conexion):
+    st.header("Mapa de los puntajes globales por municipio")
+    df = consulta_puntaje_global_por_municipio(conexion)
+    st.write(df)
+    # Cargar el archivo GeoJSON más detallado
+    geojson = 'https://gist.githubusercontent.com/john-guerra/43c7656821069d00dcbc/raw/be6a6e239cd5b5b803c6e7c2ec405b793a9064dd/Colombia.geo.json'
+    
+    #Cargar el archivo GeoJSON local
+    #with open('Backend/src/Colombia.geo.json') as f:
+    #    geojson = json.load(f)
+    # Crear la gráfica de dispersión geográfica con el archivo GeoJSON más detallado
+    fig = px.choropleth_mapbox(df, geojson=geojson, locations='departamento', color='puntaje_global',
+                                featureidkey='properties.NOMBRE_DPT', mapbox_style="carto-positron",
+                                center={"lat": 10.074048, "lon": -74.601469}, zoom=5,
+                                opacity=0.5, labels={'puntaje_global':'Puntaje Global'},
+                                color_continuous_scale="Viridis")
+    
+
+    # Mostrar la gráfica
+    st.plotly_chart(fig)

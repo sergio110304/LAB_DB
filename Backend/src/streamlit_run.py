@@ -1,5 +1,5 @@
 from Graficas_query import *
-from conexion_db import conectar_servidor
+from conexion import conectar_servidor
 
 def main():
     conexion = conectar_servidor() # se establece conexión
@@ -36,7 +36,9 @@ def main():
     g_puntajeProm_Estrato(conexion)
 
     st.markdown("<a name='pntapromdepa'></a>", unsafe_allow_html=True)
+    st.markdown("---")
     g_puntajeProm_Dept(conexion)
+
     st.markdown("<a name='mapa'></a>", unsafe_allow_html=True)
     st.markdown("---")
     dibujar_mapa(conexion)
@@ -53,8 +55,8 @@ def main():
     if not df_global_deptmun.empty:
         st.subheader("Para las siguientes gráficas seleccione el departamento/municipio que desea consultar:")
         # Se agregan widgets de selección para el departamento y municipio
-        departamento_seleccionado = st.selectbox("Selecciona un departamento", df_global_deptmun['COLE_DEPTO_UBICACION'].unique())
-        municipio_seleccionado = st.selectbox("Selecciona un municipio", df_global_deptmun[df_global_deptmun['COLE_DEPTO_UBICACION'] == departamento_seleccionado]['COLE_MCPIO_UBICACION'].unique())
+        departamento_seleccionado = st.selectbox("Selecciona un departamento", df_global_deptmun['cole_depto_ubicacion'].unique())
+        municipio_seleccionado = st.selectbox("Selecciona un municipio", df_global_deptmun[df_global_deptmun['cole_depto_ubicacion'] == departamento_seleccionado]['cole_mcpio_ubicacion'].unique())
     else:
         st.error('No se pudieron obtener resultados de la consulta')
 
