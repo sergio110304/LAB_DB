@@ -1,1 +1,3 @@
 Backend/src/conexion_db.py
+venv/
+.env

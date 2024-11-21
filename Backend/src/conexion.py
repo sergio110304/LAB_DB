@@ -1,15 +1,17 @@
 import psycopg2
 from psycopg2 import OperationalError
+from dotenv import load_dotenv
+import os
 
 def conectar_servidor():
     try:
         # Conectarse a PostgreSQL en la nube
         conexion = psycopg2.connect(
-            dbname="lab_icfes",
-            user="avnadmin",
-            password="AVNS_lVvSfnZ_z2Bnmfj5ASI",
-            host="pg-ed88bff-srodriguezcabana-914d.h.aivencloud.com",
-            port="23178"
+            dbname=os.getenv("DB_NAME"),
+            user=os.getenv("DB_USER"),
+            password=os.getenv("DB_PASSWORD"),
+            host=os.getenv("DB_HOST"),
+            port=os.getenv("DB_PORT")
         )
         print('Conexión exitosa')
         return conexion
